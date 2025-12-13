@@ -3,14 +3,12 @@ Measurements of weight were recorded for children on up to five occasions visiti
 The ages at which the measurements were taken  are roughly to target examination dates of 6 weeks, then 8, 12, 27 months. 
 The missing values are coded as -1.
 
-Column Description      Coding
---------------------------------
-Child I.D.              2-5020
-Age                     in days
-Weight                  in grams
-Birth weight            in grams
-Gender                  Boy=1; Girl=2
-
+| Column | Coding |
+| Child I.D. | 2-5020 |
+| Age | in days |
+| Weight | in grams |
+| Birth weight | in grams |
+| Gender | Boy=1; Girl=2 |
 
 Further References:
 
