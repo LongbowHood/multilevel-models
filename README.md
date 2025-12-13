@@ -4,6 +4,7 @@ The ages at which the measurements were taken  are roughly to target examination
 The missing values are coded as -1.
 
 | Column | Coding |
+| ------- | -------|
 | Child I.D. | 2-5020 |
 | Age | in days |
 | Weight | in grams |
