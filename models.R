@@ -1,5 +1,5 @@
 #load the script for data preprocessing
-#...
+source("data_preprocessing.R")
 
 # Imports
 library("lme4")
@@ -11,4 +11,9 @@ library("lmerTest")
 #load the data
 data_path = "/prep_data"
 
-df_5_long = read.csv2(file = data_path + "/data__5_obs_long.csv", header = TRUE, sep = ",", dec = ".")
+#divide data into slices
+df5_long <- data_long[data_long$NObs == 5,]
+
+# data exploration
+
+pairs(df5_long)
