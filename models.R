@@ -112,17 +112,33 @@ model_l_rint_rslp <- lmer(log_Weight ~ 1 + log_Age + (1 + log_Age|ChildID) ,
 
 
 ##Result visualization
-first10_w_id <- unique(df5_wide$ChildID[order(df5_wide$ChildID)])
-first10_w <- df5_wide[df5_wide$ChildID %in% first10_w_id,]
+first_w_id <- as.vector(unique(df5_wide$ChildID[order(df5_wide$ChildID)][1:20]))
+first_w <- df5_wide[df5_wide$ChildID %in% first_w_id,]
 
 
-pred_w_rint_fslp <-data.frame(ChildID=unique(df5_wide$ChildID[order(df5_wide$ChildID)])[1:10], 
-                              Intercepts=c(coef(model_w_rint_fslp)$ChildID[c(1:10),1]), 
-                              Slopes=c(coef(model_w_rint_fslp)$ChildID[c(1:10),2])) 
+pred_w_rint_fslp <-data.frame(ChildID=unique(df5_wide$ChildID[order(df5_wide$ChildID)])[1:5], 
+                              Intercepts=c(coef(model_w_rint_fslp)$ChildID[c(1:5),1]), 
+                              Slopes=c(coef(model_w_rint_fslp)$ChildID[c(1:5),2])) 
 
-ggplot(first10_w, aes(x = n_Age, y = n_Weight)) + 
+ggplot(first_w, aes(x = n_Age, y = n_Weight)) + 
   geom_point(fill="grey", pch=21, size=2, stroke=1.25) + 
   geom_line(aes(group=ChildID)) + facet_wrap(~ChildID, ncol=5)+
-  scale_x_continuous(name = "Time from Admission (Years)") + 
-  scale_y_continuous(name = "Rasch-Scaled FIM Score (0-100)",limits=c(0,100))+
+  scale_x_continuous(name = "Age") + 
+  scale_y_continuous(name = "Weight",limits=c(-3,3))+
   geom_abline(aes(intercept=Intercepts, slope=Slopes), col="red", lwd=1.5, pred_w_rint_fslp)
+
+first_l_id <- as.vector(unique(df5_long$ChildID[order(df5_long$ChildID)][1:20]))
+first_l <- df5_long[df5_long$ChildID %in% first_l_id,]
+
+
+pred_l_rint_fslp <-data.frame(ChildID=unique(df5_long$ChildID[order(df5_long$ChildID)])[1:5], 
+                              Intercepts=c(coef(model_l_rint_fslp)$ChildID[c(1:5),1]), 
+                              Slopes=c(coef(model_l_rint_fslp)$ChildID[c(1:5),2])) 
+
+ggplot(first_l, aes(x = log_Age, y = log_Weight)) + 
+  geom_point(fill="grey", pch=21, size=2, stroke=1.25) + 
+  geom_line(aes(group=ChildID)) + facet_wrap(~ChildID, ncol=5)+
+  scale_x_continuous(name = "log_Age") + 
+  scale_y_continuous(name = "log_Weight",limits=c(0,10))+
+  geom_abline(aes(intercept=Intercepts, slope=Slopes), col="red", lwd=1.5, pred_w_rint_fslp)
+
