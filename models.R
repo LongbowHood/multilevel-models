@@ -17,69 +17,134 @@ df5_long <- df5_long[,-6]
 df5_wide <- data_wide[data_wide$NObs == 4,]
 df5_wide <- df5_wide[,-9]
 
-# data exploration
-pairs(df5_long[,-1])
-
-ggplot(data_wide, aes(x = Age, y = Weight)) + 
-  geom_line(aes(group=ChildID)) + 
-  geom_point(aes(fill=as.factor(ChildID)), pch=21, size=1, stroke=1) + 
-  facet_wrap(~NObs) +
-  scale_x_continuous(name = "Age in days", breaks=seq(0,980, 200)) + 
-  scale_y_continuous(name = "Weight in grams",limits=c(950,20000)) + 
-  theme_bw() + theme(axis.text.x=element_text(size=8, colour="black"),
-                     axis.text.y=element_text(size=10, colour="black"), 
-                     axis.title=element_text(size=12,face="bold")) +
-  theme(strip.text.x = element_text(size = 12))+ theme(legend.position="none")
-
-ggplot(data_long, aes(x = Age, y = Weight)) + 
-  geom_line(aes(group=ChildID)) + 
-  geom_point(aes(fill=as.factor(ChildID)), pch=21, size=1, stroke=1) + 
-  facet_wrap(~NObs) +
-  scale_x_continuous(name = "Age in days", breaks=seq(0,980, 200)) + 
-  scale_y_continuous(name = "Weight in grams",limits=c(950,20000)) + 
-  theme_bw() + theme(axis.text.x=element_text(size=8, colour="black"),
-                     axis.text.y=element_text(size=10, colour="black"), 
-                     axis.title=element_text(size=12,face="bold")) +
-  theme(strip.text.x = element_text(size = 12))+ theme(legend.position="none")
-
 # Exclude the data with 1 observation only (not longitudinal data)
 data_wide <- data_wide[data_wide$NObs > 1,]
 
-# or with only 2 observations from very different time points
+
+# Dataset ---------------------------------------------------
+# Select only relevant columns
+df5_long_0 <- df5_long[ , c("ChildID", "Age", "Weight")]
+
+# Standardization
+mean(df5_long_0$Age)  # 298.7524  ~ 300
+sd(df5_long_0$Age)    # 292.6621 ~ 300
+range(df5_long_0$Age) # 0 948
+
+df5_long_0$Age_std <- (df5_long_0$Age - 300) / 300
+range(df5_long_0$Age_std) 
 
 
-# Our data 
-ggplot(df5_long, aes(x = log_Age, y = log_Weight)) + 
-  geom_line(aes(group=ChildID)) + 
-  geom_point(aes(fill=as.factor(ChildID)), pch=21, size=2, stroke=1) + 
-  scale_x_continuous(name = "log(Age)", breaks=seq(0, 7, 0.5)) + 
-  scale_y_continuous(name = "log(Weight)",limits=c(6,10)) + 
-  theme_bw() + theme(axis.text.x=element_text(size=8, colour="black"),
-                     axis.text.y=element_text(size=10, colour="black"), 
-                     axis.title=element_text(size=12,face="bold")) +
-  theme(strip.text.x = element_text(size = 12))+ theme(legend.position="none")
 
-ggplot(df5_long, aes(x = Age, y = Weight)) + 
-  geom_line(aes(group=ChildID)) + 
-  geom_point(aes(fill=as.factor(ChildID)), pch=21, size=2, stroke=1) + 
-  scale_x_continuous(name = "Age", breaks=seq(0, 980, 200)) + 
-  scale_y_continuous(name = "Weight",limits=c(950, 20000)) + 
-  theme_bw() + theme(axis.text.x=element_text(size=8, colour="black"),
-                     axis.text.y=element_text(size=10, colour="black"), 
-                     axis.title=element_text(size=12,face="bold")) +
-  theme(strip.text.x = element_text(size = 12))+ theme(legend.position="none")
+mean(df5_long_0$Weight)  # 7847.229 ~ 8000
+sd(df5_long_0$Weight)    # 3705.581 ~ 4000
+range(df5_long_0$Weight) #  1630 17300
 
-ggplot(df5_wide, aes(x = n_Age, y = n_Weight)) + 
-  geom_line(aes(group=ChildID)) + 
-  geom_point(aes(fill=as.factor(ChildID)), pch=21, size=2, stroke=1) + 
-  scale_x_continuous(name = "Age in days (normalized)", breaks=seq(-2, 2, 0.2)) + 
-  scale_y_continuous(name = "Weight in grams (normalized)",limits=c(-3, 3)) + 
-  theme_bw() + theme(axis.text.x=element_text(size=8, colour="black"),
-                     axis.text.y=element_text(size=10, colour="black"), 
-                     axis.title=element_text(size=12,face="bold")) +
-  theme(strip.text.x = element_text(size = 12))+ theme(legend.position="none")
+df5_long_0$Weight_std <- (df5_long_0$Weight - 8000) / 4000
+range(df5_long_0$Weight_std)
 
-#################################################
+
+df5_long_0_std <- df5_long_0[, c("ChildID", "Age_std", "Weight_std")]
+
+
+
+ggplot(df5_long_0_std, aes(x = Age_std, y = Weight_std)) + 
+  # Observed lines per child
+  geom_line(aes(group = ChildID), color = "grey70") + 
+  # Observed points
+  geom_point(aes(fill = as.factor(ChildID)), pch = 21, size = 2, stroke = 1) + 
+  # Axes
+  scale_x_continuous(name = "Standardized Age", breaks = seq(-1, 2.5, 0.5)) + 
+  scale_y_continuous(name = "Standardized Weight", limits = c(-1.5, 3)) + 
+  # Theme
+  theme_bw() + 
+  theme(
+    axis.text.x = element_text(size = 8, colour = "black"),
+    axis.text.y = element_text(size = 10, colour = "black"), 
+    axis.title = element_text(size = 12, face = "bold"),
+    strip.text.x = element_text(size = 12),
+    legend.position = "none"
+  )
+
+head(df5_long_0_std)
+
+# 1) Fixed intercept + Random Intercept ----------------------------------------
+
+model_int_std <- lmer(Weight_std ~ 1 + (1|ChildID), data=df5_long_0_std, REML=FALSE)
+
+summary(model_int_std)
+
+df5_long_0_std$pred_child_std <- predict(model_int_std)
+
+df5_long_0_std$pred_child
+
+
+
+
+
+
+# 2) Random Intercept + Fixed slope  --------------------------
+
+model_int_fslp_std <- lmer(Weight_std ~ 1 + Age_std + (1|ChildID), data=df5_long_0_std, REML=FALSE)
+
+summary(model_int_fslp_std)
+df5_long_0_std$pred_child_fslp <- predict(model_int_fslp_std)
+
+ggplot(df5_long_0_std, aes(x = Age, y = Weight)) + 
+  # Observed lines per child
+  geom_line(aes(group = ChildID), color = "grey70") + 
+  # Observed points
+  geom_point(aes(fill = as.factor(ChildID)), pch = 21, size = 2, stroke = 1) + 
+  # Predicted line per child
+  geom_line(aes(y = pred_child_fslp, group = ChildID, color = as.factor(ChildID)), size = 1) +
+  # Axes
+  scale_x_continuous(name = "Age", breaks = seq(0, 980, 200)) + 
+  scale_y_continuous(name = "Weight", limits = c(950, 20000)) + 
+  # Theme
+  theme_bw() + 
+  theme(
+    axis.text.x = element_text(size = 8, colour = "black"),
+    axis.text.y = element_text(size = 10, colour = "black"), 
+    axis.title = element_text(size = 12, face = "bold"),
+    strip.text.x = element_text(size = 12),
+    legend.position = "none"
+  )
+
+
+
+
+
+
+
+# 3) Random slope + Random slope   --------------------------------------------
+
+model_int_slope_std <- lmer(Weight_std ~ 1 + Age_std + (1 + Age_std | ChildID), data=df5_long_0_std, REML=FALSE)
+model_int_slope_std_uncorr <- lmer(Weight_std ~ 1 + Age_std + (1 + Age_std || ChildID), data=df5_long_0_std, REML=FALSE)
+
+isSingular(model_int_slope_std)
+isSingular(model_int_slope_std_uncorr)
+
+VarCorr(model_int_slope_std)
+VarCorr(model_int_slope_std_uncorr)
+
+
+
+## The slope and intercept are linearly dependent
+# even removing the correlation does not help
+
+summary(model_int_slope_std)
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # Model fitting (trial and error)
 
