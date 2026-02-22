@@ -1,7 +1,3 @@
-# Load the script for data preprocessing
-source("data_preprocessing.R")
-
-# Imports
 library("lme4")
 library("lmerTest")
 library("ggplot2")
@@ -11,86 +7,111 @@ library("lmerTest")
 ####################################
 ###             Plan             ###
 ####################################
-# We will model the same data in several different ways:
-# 1) using Age as the only predictor on observations after birth
-# 2) using Age as time-variant and Birthweight as time-invariant predictors
-# 3) using Age as time-variant and Birthweigt and Gender as time-invariant predictors
-# 4) using Age as the only predictor (Birthweight as observation at 0)
-# 5) using Age as time-variant and Gender as time-invariant predictor (Birthweight as observation at 0)
+
+## Preparation
+# Load the script for data preprocessing
+source("data_preprocessing.R")
 
 # We will use rescaled values for both time and target values:
-# - Age in weeks
-# - Weight / Birthweight in kg 
-
-## For cases (1), (2), (3) we use data_wide.
-## For cases (4) and (5) we use data_long.
+# - centered Age in years
+# - centered Weight / Birthweight in kg 
 
 df_wide = data_wide[c("ChildID", "Gender", "NObs", "GenderID",
-                      "r_Weight", "r_Birthweight", "r_Age")]
+                      "c_Weight_kg", "c_Birthweight_kg", "c_Age_years")]
+
+colnames(df_wide) <- c("ChildID", "Gender", "NObs", "GenderID",
+                       "Weight", "Birthweight", "Age")
+
+# Here birth weight is considered to be observation at time point 0.
+# This data will be used later for comparison.
 
 df_long = data_long[c("ChildID", "Gender", "NObs", "GenderID",
                       "r_Weight", "r_Age")]
 
-## Preparation
-
-colnames(df_wide) <- c("ChildID", "Gender", "NObs", "GenderID",
-                       "Weight", "Birthweight", "Age")
 colnames(df_long) <- c("ChildID", "Gender", "NObs", "GenderID",
                         "Weight", "Age")
-df_wide = df_wide[df_wide["NObs"] > 2, ]
 
 rm(verbose)
+
+# We will fit different models of increasing complexity on the same data
+# and conduct model comparison using criteria.
 
 ####################################
 ###        Model fitting         ###
 ####################################
 
-######## Case 1 ########
-# wide data
-# Age as only predictor
-########################
-df_result1 = df_wide[,c("ChildID", "Age", "Weight", "Gender")]
+## wide data
 
-model1_rint <- lmer(Weight ~ 1 + (1|ChildID), 
+#------- only age as predictor --------------------
+model01 <- lmer(Weight ~ 1 + (1|ChildID), 
                     data=df_wide, REML=FALSE)
-# didn't fit -> boundary (singular) fit: see help('isSingular')
-df_result1["pred_model1_rint"] <- fitted(model1_rint)
+model02 <- lmer(Weight ~ 1 + Age + (1|ChildID), 
+                    data=df_wide, REML=FALSE)
+model03 <- lmer(Weight ~ 1 + Age + (1 + Age|ChildID), 
+                    data=df_wide, REML=FALSE)
 
-model1_rint_fslp <- lmer(Weight ~ 1 + Age + (1|ChildID),
-                          data=df_wide, REML=FALSE)
+#------- time-invariant predictors ----------------
+model04 <- lmer(Weight ~ 1 + Age + Birthweight + (1 + Age|ChildID), 
+                data=df_wide, REML=FALSE)
+model05 <- lmer(Weight ~ 1 + Age * Birthweight + (1 + Age|ChildID), 
+                data=df_wide, REML=FALSE)
+model06 <- lmer(Weight ~ 1 + Age + GenderID + (1 + Age|ChildID), 
+                data=df_wide, REML=FALSE)
+model07 <- lmer(Weight ~ 1 + Age * GenderID + (1 + Age|ChildID), 
+                data=df_wide, REML=FALSE)
+model08 <- lmer(Weight ~ 1 + Age * Birthweight + Age * GenderID + (1 + Age|ChildID), 
+                data=df_wide, REML=FALSE)
 
-model1_rint_rslp <- lmer(Weight ~ 1 + Age + (1 + Age|ChildID),
-                          data=df_wide, REML=FALSE)
-### -> didn't fit
+#------- non-linear growth ------------------------
+model09 <- lmer(Weight ~ 1 + Age + I(Age^2) + (1|ChildID), 
+                data=df_wide, REML=FALSE)
+model10 <- lmer(Weight ~ 1 + Age + I(Age^2) + (1 + Age + I(Age^2)|ChildID), 
+                    data=df_wide, REML=FALSE)
+model11 <- lmer(Weight ~ 1 + Age + I(Age^2) + (1 + Age + I(Age^2)|ChildID) +
+                  Age * Birthweight + Age * GenderID, 
+                data=df_wide, REML=FALSE)
 
-model1_rint_rslp_quad <- lmer(Weight ~ 1 + Age + I(Age^2) + (1 + Age + I(Age^2)|ChildID),
-                         data=df_wide, REML=FALSE)
+## long data
 
-# long data
+#model12 <- lmer(Weight ~ 1 + (1|ChildID), 
+#                data=df_long, REML=FALSE)
 
-#model_l_rint <- lmer(log_Weight ~ 1 + (1|ChildID), 
-#                     data=df5_long, REML=FALSE)
-### -> didn't fit
+#model13 <- lmer(Weight ~ 1 + (1|ChildID), 
+#                data=df_long, REML=FALSE)
 
-#model_l_rint_fslp <- lmer(n_Weight ~ 1 + log_Age + I(log_Age^2) + 
-#                            (1|ChildID),
-#                          data=df5_long, REML=FALSE)
+#model14 <- lmer(Weight ~ 1 + (1|ChildID), 
+#                data=df_long, REML=FALSE)
 
-#model_l_rint_rslp <- lmer(log_Weight ~ 1 + log_Age + (1 + log_Age|ChildID) ,
-#                          data=df5_long, REML=FALSE)
-### -> didn't fit
+#############################
+#####    Save results   #####
+#############################
 
+df_result = df_wide[,c("ChildID", "Age", "Weight", "Birthweight", "Gender")]
 
-##Result visualization
-plot_results <- function(data, model, model_name,
-                         n = 10, ncols = 5, slopes = FALSE quad=FALSE){
-  
+df_result["m01_fitted"] <- fitted(model01)
+df_result["m02_fitted"] <- fitted(model02)
+df_result["m03_fitted"] <- fitted(model03)
+df_result["m04_fitted"] <- fitted(model04)
+df_result["m05_fitted"] <- fitted(model05)
+df_result["m06_fitted"] <- fitted(model06)
+df_result["m07_fitted"] <- fitted(model07)
+df_result["m08_fitted"] <- fitted(model08)
+df_result["m09_fitted"] <- fitted(model09)
+df_result["m10_fitted"] <- fitted(model10)
+df_result["m11_fitted"] <- fitted(model11)
+
+#################################
+##### Result visualization ######
+#################################
+
+plot_results <- function(data, model_id, model_name,
+                         n = 10, ncols = 5){
   
   first_n_id <- as.vector(unique(data$ChildID[order(data$ChildID)]))[1:n]
   first_n_id_idx <- which(data$ChildID %in% first_n_id)
   
-  data <- fitted(model)
   data_n <- data[first_n_id_idx,]
+  pred_name = paste0("m", model_id, "_fitted")
   
   g = ggplot(data_n, aes(x = Age, y = Weight)) +
     geom_point(fill="grey", pch=21, size=2, stroke=1.25) +
@@ -98,50 +119,31 @@ plot_results <- function(data, model, model_name,
     facet_wrap(~ChildID, ncol=ncols)+
     scale_x_continuous(name = "Age") + 
     scale_y_continuous(name = "Weight") +
-    geom_line(aes(y=quad_pred, col=subID), lwd=1.5)
-  13
+    geom_line(aes(y=.data[[pred_name]], col=ChildID), lwd=1.5)
   
-  
-  if(slopes){
-    pred_model <- data.frame(ChildID=first_n_id, 
-                             Intercepts=c(coef(model)$ChildID[first_n_id,1]), 
-                             Slopes=c(coef(model)$ChildID[first_n_id,2]))
-  }else{
-    pred_model <- data.frame(ChildID=first_n_id, 
-                             Intercepts=c(coef(model)$ChildID[first_n_id,1]), 
-                             Slopes=rep(0, n))
-  }
-  
-  g <- ggplot(first_n, aes(x = Age, y = Weight)) + 
-              geom_point(fill="grey", pch=21, size=2, stroke=1.25) + 
-              geom_line(aes(group=ChildID)) + 
-              facet_wrap(~ChildID, ncol = ncols)+
-              scale_x_continuous(name = "Age") + 
-              scale_y_continuous(name = "Weight") +
-              geom_abline(aes(intercept=Intercepts, slope=Slopes), 
-                col="red", lwd=1.5, pred_model) +
-              ggtitle(model_name)
-  
-  return(list("plot" = g, "fitted_values" = pred_model))
+  return(g)
+  #return(list("plot" = g, "fitted_values" = pred_name))
 }
 
-res1_rint <- plot_results(data = df_wide, model = model1_rint, 
-                          model_name = "Model 1: within-person empty model",
-             slopes = FALSE)
-res1_rint$plot
-
-
-res1_rint_fslp <- plot_results(data = df_wide, model = model1_rint_fslp, 
-                               model_name = "Model 1: random intercept, fixed linear time")
-res1_rint_fslp$plot
-
-
-res1_rint_rslp <- plot_results(data = df_wide, model = model1_rint_rslp, 
-                               model_name = "Model 1: random intercept, random linear time")
-res1_rint_rslp$plot
-
-res1_rint_rslp_quad <- plot_results(data = df_wide, model = model1_rint_rslp_quad, 
-                                    model_name = "Model 1: random intercept, random quadratic time")
-res1_rint_rslp_quad$plot
-res1_rint_rslp_quad$fitted_values
-
+plot_results(data = df_result, model_id = "01", 
+             model_name = "Model 1: within-person empty model")
+plot_results(data = df_result, model_id = "02", 
+             model_name = "Model 1: within-person empty model")
+plot_results(data = df_result, model_id = "03", 
+             model_name = "Model 1: within-person empty model")
+plot_results(data = df_result, model_id = "04", 
+             model_name = "Model 1: within-person empty model")
+plot_results(data = df_result, model_id = "05", 
+             model_name = "Model 1: within-person empty model")
+plot_results(data = df_result, model_id = "06", 
+             model_name = "Model 1: within-person empty model")
+plot_results(data = df_result, model_id = "07", 
+             model_name = "Model 1: within-person empty model")
+plot_results(data = df_result, model_id = "08", 
+             model_name = "Model 1: within-person empty model")
+plot_results(data = df_result, model_id = "09", 
+             model_name = "Model 1: within-person empty model")
+plot_results(data = df_result, model_id = "10", 
+             model_name = "Model 1: within-person empty model")
+plot_results(data = df_result, model_id = "11", 
+             model_name = "Model 1: within-person empty model")

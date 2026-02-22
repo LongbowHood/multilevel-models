@@ -50,11 +50,11 @@ plot_facet_var <- function(varx, vary, data, data_type, var_facet,
 
 if(verbose == TRUE){
 
-  plot_all_obs("Age", "Weight", data_wide, "data wide")
-  plot_all_obs("Age", "Weight", data_long, "data long")
+plot_all_obs("Age", "Weight", data_wide, "data wide")
+plot_all_obs("Age", "Weight", data_long, "data long")
   
-  plot_facet_var("Age", "Weight", data_wide, "data wide", "NObs")
-  plot_facet_var("Age", "Weight", data_long, "data long", "NObs")
+plot_facet_var("Age", "Weight", data_wide, "data wide", "NObs")
+plot_facet_var("Age", "Weight", data_long, "data long", "NObs")
   
 }
 
@@ -63,8 +63,11 @@ data_wide$r_Weight <- data_wide$Weight / 1000
 data_wide$r_Birthweight <- data_wide$Birthweight / 1000
 data_long$r_Weight <- data_long$Weight / 1000
 
-data_wide$r_Age <- data_wide$Age / 365
-data_long$r_Age <- data_long$Age / 365
+data_wide$r_Age_weeks <- data_wide$Age / 7
+data_long$r_Age_weeks <- data_long$Age / 7
+
+data_wide$r_Age_years <- data_wide$Age / 365
+data_long$r_Age_years <- data_long$Age / 365
 
 # Normalize / logarithm of the columns
 data_long$log_Age <- log(data_long$Age + 1)
@@ -89,6 +92,11 @@ data_wide$c_Age <- (data_wide$Age - mean(data_wide$Age))
 data_wide$c_Weight <- (data_wide$Weight - mean(data_wide$Weight))
 data_wide$c_Birthweight <- (data_wide$Birthweight - mean(data_wide$Birthweight))
 
+data_wide$c_Age_years <- (data_wide$r_Age_years - mean(data_wide$r_Age_years))
+data_wide$c_Weight_kg <- (data_wide$r_Weight - mean(data_wide$r_Weight))
+data_wide$c_Birthweight_kg <- (data_wide$r_Birthweight - mean(data_wide$r_Birthweight))
+
+
 # Transformed values
 if(verbose == TRUE){
 plot_all_obs("Age", "Weight", data_wide, 
@@ -99,8 +107,8 @@ plot_all_obs("r_Age", "c_Weight", data_wide,
              data_type = "data wide", transfx = " (centered)", transfy = " (centered)")
 plot_all_obs("r_Age", "n_Weight", data_wide, 
              data_type = "data wide", transfx = " (years)", transfy = " (norm.)")
-plot_all_obs("r_Age", "log_Weight", data_wide, 
-             data_type = "data wide", transfx = " (years)", transfy = " (logarithm)")
+plot_all_obs("log_Age", "log_Weight", data_wide, 
+             data_type = "data wide", transfx = " (logarithm)", transfy = " (logarithm)")
 }
 
 #################################################
@@ -119,5 +127,5 @@ plot_facet_var("r_Age", "r_Weight", data_long, data_type = "data long",
                  var_facet = "Gender", transfx = " (weeks)", transfy = " (kg)")
 }
 
-table(data_wide$Gender, data_wide$NObs) / rep(2:5, each = 2)
+table(data_wide$Gender, data_wide$NObs) / rep(1:5, each = 2)
 table(data_long$Gender, data_long$NObs) / rep(2:6, each = 2)
