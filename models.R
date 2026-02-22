@@ -1,4 +1,4 @@
-#load the script for data preprocessing
+# Load the script for data preprocessing
 source("data_preprocessing.R")
 
 # Imports
@@ -8,137 +8,140 @@ library("ggplot2")
 library("dplyr")
 library("lmerTest")
 
-#load the data
-data_path = "/prep_data"
+####################################
+###             Plan             ###
+####################################
+# We will model the same data in several different ways:
+# 1) using Age as the only predictor on observations after birth
+# 2) using Age as time-variant and Birthweight as time-invariant predictors
+# 3) using Age as time-variant and Birthweigt and Gender as time-invariant predictors
+# 4) using Age as the only predictor (Birthweight as observation at 0)
+# 5) using Age as time-variant and Gender as time-invariant predictor (Birthweight as observation at 0)
 
-#divide data into slices
-df5_long <- data_long[data_long$NObs == 5,]
-df5_long <- df5_long[,-6]
-df5_wide <- data_wide[data_wide$NObs == 4,]
-df5_wide <- df5_wide[,-9]
+# We will use rescaled values for both time and target values:
+# - Age in weeks
+# - Weight / Birthweight in kg 
 
-# data exploration
-pairs(df5_long[,-1])
+## For cases (1), (2), (3) we use data_wide.
+## For cases (4) and (5) we use data_long.
 
-ggplot(data_wide, aes(x = Age, y = Weight)) + 
-  geom_line(aes(group=ChildID)) + 
-  geom_point(aes(fill=as.factor(ChildID)), pch=21, size=1, stroke=1) + 
-  facet_wrap(~NObs) +
-  scale_x_continuous(name = "Age in days", breaks=seq(0,980, 200)) + 
-  scale_y_continuous(name = "Weight in grams",limits=c(950,20000)) + 
-  theme_bw() + theme(axis.text.x=element_text(size=8, colour="black"),
-                     axis.text.y=element_text(size=10, colour="black"), 
-                     axis.title=element_text(size=12,face="bold")) +
-  theme(strip.text.x = element_text(size = 12))+ theme(legend.position="none")
+df_wide = data_wide[c("ChildID", "Gender", "NObs", "GenderID",
+                      "r_Weight", "r_Birthweight", "r_Age")]
 
-ggplot(data_long, aes(x = Age, y = Weight)) + 
-  geom_line(aes(group=ChildID)) + 
-  geom_point(aes(fill=as.factor(ChildID)), pch=21, size=1, stroke=1) + 
-  facet_wrap(~NObs) +
-  scale_x_continuous(name = "Age in days", breaks=seq(0,980, 200)) + 
-  scale_y_continuous(name = "Weight in grams",limits=c(950,20000)) + 
-  theme_bw() + theme(axis.text.x=element_text(size=8, colour="black"),
-                     axis.text.y=element_text(size=10, colour="black"), 
-                     axis.title=element_text(size=12,face="bold")) +
-  theme(strip.text.x = element_text(size = 12))+ theme(legend.position="none")
+df_long = data_long[c("ChildID", "Gender", "NObs", "GenderID",
+                      "r_Weight", "r_Age")]
 
-# Exclude the data with 1 observation only (not longitudinal data)
-data_wide <- data_wide[data_wide$NObs > 1,]
+## Preparation
 
-# or with only 2 observations from very different time points
+colnames(df_wide) <- c("ChildID", "Gender", "NObs", "GenderID",
+                       "Weight", "Birthweight", "Age")
+colnames(df_long) <- c("ChildID", "Gender", "NObs", "GenderID",
+                        "Weight", "Age")
+df_wide = df_wide[df_wide["NObs"] > 2, ]
 
+rm(verbose)
 
-# Our data 
-ggplot(df5_long, aes(x = log_Age, y = log_Weight)) + 
-  geom_line(aes(group=ChildID)) + 
-  geom_point(aes(fill=as.factor(ChildID)), pch=21, size=2, stroke=1) + 
-  scale_x_continuous(name = "log(Age)", breaks=seq(0, 7, 0.5)) + 
-  scale_y_continuous(name = "log(Weight)",limits=c(6,10)) + 
-  theme_bw() + theme(axis.text.x=element_text(size=8, colour="black"),
-                     axis.text.y=element_text(size=10, colour="black"), 
-                     axis.title=element_text(size=12,face="bold")) +
-  theme(strip.text.x = element_text(size = 12))+ theme(legend.position="none")
+####################################
+###        Model fitting         ###
+####################################
 
-ggplot(df5_long, aes(x = Age, y = Weight)) + 
-  geom_line(aes(group=ChildID)) + 
-  geom_point(aes(fill=as.factor(ChildID)), pch=21, size=2, stroke=1) + 
-  scale_x_continuous(name = "Age", breaks=seq(0, 980, 200)) + 
-  scale_y_continuous(name = "Weight",limits=c(950, 20000)) + 
-  theme_bw() + theme(axis.text.x=element_text(size=8, colour="black"),
-                     axis.text.y=element_text(size=10, colour="black"), 
-                     axis.title=element_text(size=12,face="bold")) +
-  theme(strip.text.x = element_text(size = 12))+ theme(legend.position="none")
-
-ggplot(df5_wide, aes(x = n_Age, y = n_Weight)) + 
-  geom_line(aes(group=ChildID)) + 
-  geom_point(aes(fill=as.factor(ChildID)), pch=21, size=2, stroke=1) + 
-  scale_x_continuous(name = "Age in days (normalized)", breaks=seq(-2, 2, 0.2)) + 
-  scale_y_continuous(name = "Weight in grams (normalized)",limits=c(-3, 3)) + 
-  theme_bw() + theme(axis.text.x=element_text(size=8, colour="black"),
-                     axis.text.y=element_text(size=10, colour="black"), 
-                     axis.title=element_text(size=12,face="bold")) +
-  theme(strip.text.x = element_text(size = 12))+ theme(legend.position="none")
-
-#################################################
-
-# Model fitting (trial and error)
-
+######## Case 1 ########
 # wide data
+# Age as only predictor
+########################
+df_result1 = df_wide[,c("ChildID", "Age", "Weight", "Gender")]
 
-model_w_rint <- lmer(n_Weight ~ 1 + (1|ChildID), 
-                     data=df5_wide, REML=FALSE)
+model1_rint <- lmer(Weight ~ 1 + (1|ChildID), 
+                    data=df_wide, REML=FALSE)
+# didn't fit -> boundary (singular) fit: see help('isSingular')
+df_result1["pred_model1_rint"] <- fitted(model1_rint)
+
+model1_rint_fslp <- lmer(Weight ~ 1 + Age + (1|ChildID),
+                          data=df_wide, REML=FALSE)
+
+model1_rint_rslp <- lmer(Weight ~ 1 + Age + (1 + Age|ChildID),
+                          data=df_wide, REML=FALSE)
 ### -> didn't fit
 
-model_w_rint_fslp <- lmer(n_Weight ~ 1 + n_Age + (1|ChildID),
-                          data=df5_wide, REML=FALSE)
-
-model_w_rint_rslp <- lmer(n_Weight ~ 1 + n_Age + (1 + n_Age|ChildID),
-                          data=df5_wide, REML=FALSE)
-
-### -> didn't fit
+model1_rint_rslp_quad <- lmer(Weight ~ 1 + Age + I(Age^2) + (1 + Age + I(Age^2)|ChildID),
+                         data=df_wide, REML=FALSE)
 
 # long data
 
-model_l_rint <- lmer(log_Weight ~ 1 + (1|ChildID), 
-                     data=df5_long, REML=FALSE)
+#model_l_rint <- lmer(log_Weight ~ 1 + (1|ChildID), 
+#                     data=df5_long, REML=FALSE)
 ### -> didn't fit
 
-model_l_rint_fslp <- lmer(log_Weight ~ 1 + log_Age + (1|ChildID),
-                          data=df5_long, REML=FALSE)
+#model_l_rint_fslp <- lmer(n_Weight ~ 1 + log_Age + I(log_Age^2) + 
+#                            (1|ChildID),
+#                          data=df5_long, REML=FALSE)
 
-model_l_rint_rslp <- lmer(log_Weight ~ 1 + log_Age + (1 + log_Age|ChildID) ,
-                          data=df5_long, REML=FALSE)
+#model_l_rint_rslp <- lmer(log_Weight ~ 1 + log_Age + (1 + log_Age|ChildID) ,
+#                          data=df5_long, REML=FALSE)
 ### -> didn't fit
 
 
 ##Result visualization
-first_w_id <- as.vector(unique(df5_wide$ChildID[order(df5_wide$ChildID)][1:20]))
-first_w <- df5_wide[df5_wide$ChildID %in% first_w_id,]
+plot_results <- function(data, model, model_name,
+                         n = 10, ncols = 5, slopes = FALSE quad=FALSE){
+  
+  
+  first_n_id <- as.vector(unique(data$ChildID[order(data$ChildID)]))[1:n]
+  first_n_id_idx <- which(data$ChildID %in% first_n_id)
+  
+  data <- fitted(model)
+  data_n <- data[first_n_id_idx,]
+  
+  g = ggplot(data_n, aes(x = Age, y = Weight)) +
+    geom_point(fill="grey", pch=21, size=2, stroke=1.25) +
+    geom_line(aes(group=ChildID)) + 
+    facet_wrap(~ChildID, ncol=ncols)+
+    scale_x_continuous(name = "Age") + 
+    scale_y_continuous(name = "Weight") +
+    geom_line(aes(y=quad_pred, col=subID), lwd=1.5)
+  13
+  
+  
+  if(slopes){
+    pred_model <- data.frame(ChildID=first_n_id, 
+                             Intercepts=c(coef(model)$ChildID[first_n_id,1]), 
+                             Slopes=c(coef(model)$ChildID[first_n_id,2]))
+  }else{
+    pred_model <- data.frame(ChildID=first_n_id, 
+                             Intercepts=c(coef(model)$ChildID[first_n_id,1]), 
+                             Slopes=rep(0, n))
+  }
+  
+  g <- ggplot(first_n, aes(x = Age, y = Weight)) + 
+              geom_point(fill="grey", pch=21, size=2, stroke=1.25) + 
+              geom_line(aes(group=ChildID)) + 
+              facet_wrap(~ChildID, ncol = ncols)+
+              scale_x_continuous(name = "Age") + 
+              scale_y_continuous(name = "Weight") +
+              geom_abline(aes(intercept=Intercepts, slope=Slopes), 
+                col="red", lwd=1.5, pred_model) +
+              ggtitle(model_name)
+  
+  return(list("plot" = g, "fitted_values" = pred_model))
+}
+
+res1_rint <- plot_results(data = df_wide, model = model1_rint, 
+                          model_name = "Model 1: within-person empty model",
+             slopes = FALSE)
+res1_rint$plot
 
 
-pred_w_rint_fslp <-data.frame(ChildID=unique(df5_wide$ChildID[order(df5_wide$ChildID)])[1:5], 
-                              Intercepts=c(coef(model_w_rint_fslp)$ChildID[c(1:5),1]), 
-                              Slopes=c(coef(model_w_rint_fslp)$ChildID[c(1:5),2])) 
-
-ggplot(first_w, aes(x = n_Age, y = n_Weight)) + 
-  geom_point(fill="grey", pch=21, size=2, stroke=1.25) + 
-  geom_line(aes(group=ChildID)) + facet_wrap(~ChildID, ncol=5)+
-  scale_x_continuous(name = "Age") + 
-  scale_y_continuous(name = "Weight",limits=c(-3,3))+
-  geom_abline(aes(intercept=Intercepts, slope=Slopes), col="red", lwd=1.5, pred_w_rint_fslp)
-
-first_l_id <- as.vector(unique(df5_long$ChildID[order(df5_long$ChildID)][1:20]))
-first_l <- df5_long[df5_long$ChildID %in% first_l_id,]
+res1_rint_fslp <- plot_results(data = df_wide, model = model1_rint_fslp, 
+                               model_name = "Model 1: random intercept, fixed linear time")
+res1_rint_fslp$plot
 
 
-pred_l_rint_fslp <-data.frame(ChildID=unique(df5_long$ChildID[order(df5_long$ChildID)])[1:5], 
-                              Intercepts=c(coef(model_l_rint_fslp)$ChildID[c(1:5),1]), 
-                              Slopes=c(coef(model_l_rint_fslp)$ChildID[c(1:5),2])) 
+res1_rint_rslp <- plot_results(data = df_wide, model = model1_rint_rslp, 
+                               model_name = "Model 1: random intercept, random linear time")
+res1_rint_rslp$plot
 
-ggplot(first_l, aes(x = log_Age, y = log_Weight)) + 
-  geom_point(fill="grey", pch=21, size=2, stroke=1.25) + 
-  geom_line(aes(group=ChildID)) + facet_wrap(~ChildID, ncol=5)+
-  scale_x_continuous(name = "log_Age") + 
-  scale_y_continuous(name = "log_Weight",limits=c(0,10))+
-  geom_abline(aes(intercept=Intercepts, slope=Slopes), col="red", lwd=1.5, pred_w_rint_fslp)
+res1_rint_rslp_quad <- plot_results(data = df_wide, model = model1_rint_rslp_quad, 
+                                    model_name = "Model 1: random intercept, random quadratic time")
+res1_rint_rslp_quad$plot
+res1_rint_rslp_quad$fitted_values
 
