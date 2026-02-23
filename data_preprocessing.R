@@ -127,5 +127,5 @@ plot_facet_var("r_Age", "r_Weight", data_long, data_type = "data long",
                  var_facet = "Gender", transfx = " (weeks)", transfy = " (kg)")
 }
 
-table(data_wide$Gender, data_wide$NObs) / rep(1:5, each = 2)
+table(data_wide$Gender, data_wide$NObs) / rep(2:5, each = 2)
 table(data_long$Gender, data_long$NObs) / rep(2:6, each = 2)

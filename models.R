@@ -26,7 +26,7 @@ colnames(df_wide) <- c("ChildID", "Gender", "NObs", "GenderID",
 # This data will be used later for comparison.
 
 df_long = data_long[c("ChildID", "Gender", "NObs", "GenderID",
-                      "r_Weight", "r_Age")]
+                      "r_Weight", "r_Age_weeks")]
 
 colnames(df_long) <- c("ChildID", "Gender", "NObs", "GenderID",
                         "Weight", "Age")
@@ -71,6 +71,7 @@ model11 <- lmer(Weight ~ 1 + Age + I(Age^2) + (1 + Age + I(Age^2)|ChildID) +
                   Age * Birthweight + Age * GenderID, 
                 data=df_wide, REML=FALSE)
 
+
 ## long data
 
 #model12 <- lmer(Weight ~ 1 + (1|ChildID), 
@@ -104,14 +105,20 @@ df_result["m11_fitted"] <- fitted(model11)
 ##### Result visualization ######
 #################################
 
-plot_results <- function(data, model_id, model_name,
+time_grid <- seq(min(df_wide["Age"]), max(df_wide["Age"]), length.out = 50)
+
+plot_results <- function(data, model, model_name,
                          n = 10, ncols = 5){
+  set.seed(42)
+  sample_n_id <- sample(as.vector(unique(data$ChildID[order(data$ChildID)])), n)
+  sample_n_id_idx <- which(data$ChildID %in% first_n_id)
+  data_n <- unique(data[first_n_id_idx, 
+                        c("ChildID", "Birthweight", "GenderID", "Age", "Weight")])
   
-  first_n_id <- as.vector(unique(data$ChildID[order(data$ChildID)]))[1:n]
-  first_n_id_idx <- which(data$ChildID %in% first_n_id)
+  newdata <- cbind(data_n, rep(rownames(data_n), each = length(time_grid)))[,1:3]
+  newdata$Age <- rep(time_grid, each = n)
   
-  data_n <- data[first_n_id_idx,]
-  pred_name = paste0("m", model_id, "_fitted")
+  newdata$Predictions <- predict(model, newdata)
   
   g = ggplot(data_n, aes(x = Age, y = Weight)) +
     geom_point(fill="grey", pch=21, size=2, stroke=1.25) +
@@ -119,31 +126,36 @@ plot_results <- function(data, model_id, model_name,
     facet_wrap(~ChildID, ncol=ncols)+
     scale_x_continuous(name = "Age") + 
     scale_y_continuous(name = "Weight") +
-    geom_line(aes(y=.data[[pred_name]], col=ChildID), lwd=1.5)
+    geom_line(data = newdata, 
+              aes(x = Age, y = Predictions, group = ChildID, color = factor(ChildID)),
+              lwd=1.5) +
+    ggtitle(model_name)
   
   return(g)
   #return(list("plot" = g, "fitted_values" = pred_name))
 }
 
-plot_results(data = df_result, model_id = "01", 
+
+plot_results(df_wide, model01, 
              model_name = "Model 1: within-person empty model")
-plot_results(data = df_result, model_id = "02", 
-             model_name = "Model 1: within-person empty model")
-plot_results(data = df_result, model_id = "03", 
-             model_name = "Model 1: within-person empty model")
-plot_results(data = df_result, model_id = "04", 
-             model_name = "Model 1: within-person empty model")
-plot_results(data = df_result, model_id = "05", 
-             model_name = "Model 1: within-person empty model")
-plot_results(data = df_result, model_id = "06", 
-             model_name = "Model 1: within-person empty model")
-plot_results(data = df_result, model_id = "07", 
-             model_name = "Model 1: within-person empty model")
-plot_results(data = df_result, model_id = "08", 
-             model_name = "Model 1: within-person empty model")
-plot_results(data = df_result, model_id = "09", 
-             model_name = "Model 1: within-person empty model")
-plot_results(data = df_result, model_id = "10", 
-             model_name = "Model 1: within-person empty model")
-plot_results(data = df_result, model_id = "11", 
-             model_name = "Model 1: within-person empty model")
+plot_results(df_wide, model02, 
+             model_name = "Model 2: random intercept, fixed linear time")
+plot_results(df_wide, model03, 
+             model_name = "Model 3: random linear time (RLT)")
+plot_results(df_wide, model04, 
+             model_name = "Model 4: RLT + fixed Birthweight")
+plot_results(df_wide, model05, 
+             model_name = "Model 5: RLT + fixed Birthweight with interaction")
+plot_results(df_wide, model06, 
+             model_name = "Model 6: RLT + fixed Gender")
+plot_results(df_wide, model07, 
+             model_name = "Model 7: RLT + fixed Birthweight and Gender")
+plot_results(df_wide, model08, 
+             model_name = "Model 8: RLT + fixed Birthweight and Gender with interactions")
+plot_results(df_wide, model09, 
+             model_name = "Model 9: random intercept, fixed quadratic time")
+plot_results(df_wide, model10, 
+             model_name = "Model 10: random quadratic time")
+plot_results(df_wide, model11, 
+             model_name = "Model 11: RQT + fixed Birthweight and Gender with interactions")
+
