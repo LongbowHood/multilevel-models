@@ -44,32 +44,32 @@ rm(verbose)
 
 #------- only age as predictor --------------------
 model01 <- lmer(Weight ~ 1 + (1|ChildID), 
-                    data=df_wide, REML=FALSE)
+                    data=df_wide, REML=TRUE)
 model02 <- lmer(Weight ~ 1 + Age + (1|ChildID), 
-                    data=df_wide, REML=FALSE)
+                    data=df_wide, REML=TRUE)
 model03 <- lmer(Weight ~ 1 + Age + (1 + Age|ChildID), 
-                    data=df_wide, REML=FALSE)
+                    data=df_wide, REML=TRUE)
 
 #------- time-invariant predictors ----------------
 model04 <- lmer(Weight ~ 1 + Age + Birthweight + (1 + Age|ChildID), 
-                data=df_wide, REML=FALSE)
+                data=df_wide, REML=TRUE)
 model05 <- lmer(Weight ~ 1 + Age * Birthweight + (1 + Age|ChildID), 
-                data=df_wide, REML=FALSE)
+                data=df_wide, REML=TRUE)
 model06 <- lmer(Weight ~ 1 + Age + GenderID + (1 + Age|ChildID), 
-                data=df_wide, REML=FALSE)
+                data=df_wide, REML=TRUE)
 model07 <- lmer(Weight ~ 1 + Age * GenderID + (1 + Age|ChildID), 
-                data=df_wide, REML=FALSE)
+                data=df_wide, REML=TRUE)
 model08 <- lmer(Weight ~ 1 + Age * Birthweight + Age * GenderID + (1 + Age|ChildID), 
-                data=df_wide, REML=FALSE)
+                data=df_wide, REML=TRUE)
 
 #------- non-linear growth ------------------------
 model09 <- lmer(Weight ~ 1 + Age + I(Age^2) + (1|ChildID), 
-                data=df_wide, REML=FALSE)
+                data=df_wide, REML=TRUE)
 model10 <- lmer(Weight ~ 1 + Age + I(Age^2) + (1 + Age + I(Age^2)|ChildID), 
-                    data=df_wide, REML=FALSE)
+                    data=df_wide, REML=TRUE)
 model11 <- lmer(Weight ~ 1 + Age + I(Age^2) + (1 + Age + I(Age^2)|ChildID) +
                   Age * Birthweight + Age * GenderID, 
-                data=df_wide, REML=FALSE)
+                data=df_wide, REML=TRUE)
 
 
 ## long data
