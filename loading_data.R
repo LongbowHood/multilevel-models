@@ -45,54 +45,26 @@ data[, 2:4] <- sapply(data[,2:4], as.integer)
 
 data$ChildID <- gsub(" ", "", data$ChildID)
 
-as.integer(data$ChildID)
-
 data$ChildID <- as.factor(data$ChildID)
 
 
 ## This is long repeated measurement data
 head(data) # 1572 x 5
 
-## birthweight dataset alone
-# Use birthweight as Weight at Age 0
-birthweight <- data[, c("ChildID", "Birthweight", "Gender")] # 1572 x 3
-
-# remove the duplicates of birthweight and keep the birthweght of 568 children
-birthweight <- birthweight[(!duplicated(birthweight)),]
-birthweight$Age <- 0 # add column of Age = 0 as birthweight
-birthweight$Weight <- birthweight$Birthweight # add another column of weight
-
-head(birthweight)
-
-# repeated measurements are stored in different columns.
-data_wide <- data # ?? This is long too
 
 
-
-birthweight
-
-data
-
-data_long <- rbind(data[,c("ChildID", "Age", "Weight", "Gender")],
-                   birthweight[,c("ChildID", "Age", "Weight", "Gender")]) 
-
-# (1572 + 568) x 4 
-head(data_long) # 2140 x 4
 
 
 # Number of observations
-data_long$NObs <- as.vector(table(data_long$ChildID)[data_long$Child])
-data_wide$NObs <- as.vector(table(data_wide$ChildID)[data_wide$Child]) # ??
+data$NObs <- as.vector(table(data$ChildID)[data$Child])
 
 # Decode gender
-data_wide$GenderID <- as.integer(data_wide$Gender) - 1
-data_wide$Gender <- factor(data_wide$GenderID, labels = c("Boy", "Girl"))
+data$GenderID <- as.integer(data$Gender) - 1
+data$Gender <- factor(data$GenderID, labels = c("Boy", "Girl"))
 
-data_long$GenderID <- as.integer(data_long$Gender) - 1
-data_long$Gender <- factor(data_long$GenderID, labels = c("Boy", "Girl"))
 
-head(data_long) # 2140 x 6
- 
+head(data) # 1572 x 7
+
 # remove unneccessary objects from the environment
-rm(data_raw, data, col_list, col_idxs, birthweight, data_path, extract_columns)
+rm(data_raw, col_list, col_idxs, data_path, extract_columns)
 
