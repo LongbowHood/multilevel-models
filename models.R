@@ -159,3 +159,5 @@ plot_results(df_wide, model10,
 plot_results(df_wide, model11, 
              model_name = "Model 11: RQT + fixed Birthweight and Gender with interactions")
 
+
+plot(model11)
