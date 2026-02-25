@@ -50,7 +50,7 @@ model02 <- lmer(Weight ~ 1 + Age + (1|ChildID),
 model03 <- lmer(Weight ~ 1 + Age + (1 + Age|ChildID), 
                     data=df_wide, REML=TRUE)
 
-#------- time-invariant predictors ----------------
+#------- time-invariant predictors with random linear time  ----------------
 model04 <- lmer(Weight ~ 1 + Age + Birthweight + (1 + Age|ChildID), 
                 data=df_wide, REML=TRUE)
 model05 <- lmer(Weight ~ 1 + Age * Birthweight + (1 + Age|ChildID), 
@@ -62,15 +62,35 @@ model07 <- lmer(Weight ~ 1 + Age * GenderID + (1 + Age|ChildID),
 model08 <- lmer(Weight ~ 1 + Age * Birthweight + Age * GenderID + (1 + Age|ChildID), 
                 data=df_wide, REML=TRUE)
 
+#------- time-invariant predictors with fixed linear time  ----------------
+model14 <- lmer(Weight ~ 1 + Age + Birthweight + (1|ChildID), 
+                data=df_wide, REML=TRUE)
+model15 <- lmer(Weight ~ 1 + Age * Birthweight + (1|ChildID), 
+                data=df_wide, REML=TRUE)
+model16 <- lmer(Weight ~ 1 + Age + GenderID + (1|ChildID), 
+                data=df_wide, REML=TRUE)
+model17 <- lmer(Weight ~ 1 + Age * GenderID + (1|ChildID), 
+                data=df_wide, REML=TRUE)
+model18 <- lmer(Weight ~ 1 + Age * Birthweight + Age * GenderID + (1|ChildID), 
+                data=df_wide, REML=TRUE)
+
+
 #------- non-linear growth ------------------------
 model09 <- lmer(Weight ~ 1 + Age + I(Age^2) + (1|ChildID), 
                 data=df_wide, REML=TRUE)
-model10 <- lmer(Weight ~ 1 + Age + I(Age^2) + (1 + Age + I(Age^2)|ChildID), 
+model10 <- lmer(Weight ~ 1 + Age + I(Age^2) + (1 + Age|ChildID), 
                     data=df_wide, REML=TRUE)
-model11 <- lmer(Weight ~ 1 + Age + I(Age^2) + (1 + Age + I(Age^2)|ChildID) +
+model11 <- lmer(Weight ~ 1 + Age + I(Age^2) + (1 + Age + I(Age^2)|ChildID), 
+                data=df_wide, REML=TRUE)
+
+#------- non-linear growth with add predictors -------------
+model12 <- lmer(Weight ~ 1 + Age + I(Age^2) + (1|ChildID) +
                   Age * Birthweight + Age * GenderID, 
                 data=df_wide, REML=TRUE)
 
+model13 <- lmer(Weight ~ 1 + Age + I(Age^2) + (1 + Age|ChildID) +
+                  Age * Birthweight + Age * GenderID, 
+                data=df_wide, REML=TRUE)
 
 ## long data
 
@@ -111,11 +131,12 @@ plot_results <- function(data, model, model_name,
                          n = 10, ncols = 5){
   set.seed(42)
   sample_n_id <- sample(as.vector(unique(data$ChildID[order(data$ChildID)])), n)
-  sample_n_id_idx <- which(data$ChildID %in% first_n_id)
-  data_n <- unique(data[first_n_id_idx, 
-                        c("ChildID", "Birthweight", "GenderID", "Age", "Weight")])
-  
-  newdata <- cbind(data_n, rep(rownames(data_n), each = length(time_grid)))[,1:3]
+  sample_n_id_idx <- which(data$ChildID %in% sample_n_id)
+  data_n <- data[sample_n_id_idx, 
+                 c("ChildID", "Birthweight", "GenderID", "Age", "Weight")]
+  unique_data_n <- unique(data_n[c("ChildID", "Birthweight", "GenderID")])
+  newdata <- cbind(unique_data_n, 
+                   rep(rownames(unique_data_n), each = length(time_grid)))[,1:3]
   newdata$Age <- rep(time_grid, each = n)
   
   newdata$Predictions <- predict(model, newdata)
@@ -135,10 +156,9 @@ plot_results <- function(data, model, model_name,
   #return(list("plot" = g, "fitted_values" = pred_name))
 }
 
-
 plot_results(df_wide, model01, 
              model_name = "Model 1: within-person empty model")
-plot_results(df_wide, model02, 
+plot_results(df_wide, model02, n=6, ncol = 3,
              model_name = "Model 2: random intercept, fixed linear time")
 plot_results(df_wide, model03, 
              model_name = "Model 3: random linear time (RLT)")
@@ -154,10 +174,27 @@ plot_results(df_wide, model08,
              model_name = "Model 8: RLT + fixed Birthweight and Gender with interactions")
 plot_results(df_wide, model09, 
              model_name = "Model 9: random intercept, fixed quadratic time")
-plot_results(df_wide, model10, 
-             model_name = "Model 10: random quadratic time")
+plot_results(df_wide, model10, n = 6, ncol = 3,
+             model_name = "Model 10: random linear time, fixed quadratic time")
 plot_results(df_wide, model11, 
-             model_name = "Model 11: RQT + fixed Birthweight and Gender with interactions")
+             model_name = "Model 11: random quadratic time")
+plot_results(df_wide, model12,  n = 6, ncol = 3,
+             model_name = "Model 12: fixed linear, fixed quadratic time, \n Birthweight and Gender with interactions")
+plot_results(df_wide, model13, n = 6, ncol = 3,
+             model_name = "Model 13: random linear time, fixed quadratic time, \n Birthweight and Gender with interactions")
+plot_results(df_wide, model14, 
+             model_name = "Model 14: fixed linear time + fixed Birthweight")
+plot_results(df_wide, model15, 
+             model_name = "Model 15: fixed linear time + fixed Age * Birthweight")
+plot_results(df_wide, model16, 
+             model_name = "Model 16: fixed linear time + fixed Gender")
+plot_results(df_wide, model17, 
+             model_name = "Model 17: fixed linear time + fixed Age * Gender")
+plot_results(df_wide, model18, n = 6, ncol = 3,
+             model_name = "Model 18: fixed linear time + fixed Age * Birthweight and Age * Gender")
 
-
-plot(model11)
+###############################################
+########       Model diagnostics        #######
+summary(model01)
+anova(model01, model02, model03)
+anova(model09, model10, model11)
