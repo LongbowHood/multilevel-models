@@ -1,10 +1,14 @@
 rm(list = ls())
 source("data_load.R")
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 
 names(data_long)
 # "ChildID"  "Age"      "Weight"   "Gender"   "NObs"     "GenderID"
 
+=======
+library(ggplot2)
+>>>>>>> Stashed changes
 =======
 library(ggplot2)
 >>>>>>> Stashed changes
@@ -65,6 +69,7 @@ table(unique(data_long[, c("ChildID", "NObs")])$NObs)
 if(verbose == TRUE){
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
   
   
 ## ----------- Original scale plots alone and over NObs --------------
@@ -72,6 +77,14 @@ if(verbose == TRUE){
 plot_all_obs("Age", "Weight", data_long, "data long")
   
 # plot_facet_var("Age", "Weight", data_wide, "data wide", "NObs")
+=======
+plot_all_obs("Age", "Weight", data_wide, "", 
+             transfx = " (in days)", transfy = " (in grams)")
+plot_all_obs("Age", "Weight", data_long, "data long")
+  
+plot_facet_var("Age", "Weight", data_wide, "", "NObs", 
+               transfx = " (in days)", transfy = " (in grams)")
+>>>>>>> Stashed changes
 =======
 plot_all_obs("Age", "Weight", data_wide, "", 
              transfx = " (in days)", transfy = " (in grams)")
