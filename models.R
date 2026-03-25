@@ -198,3 +198,9 @@ plot_results(df_wide, model18, n = 6, ncol = 3,
 summary(model01)
 anova(model01, model02, model03)
 anova(model09, model10, model11)
+summary(model13)
+anova(model13)
+
+model19 <- lmer(Weight ~ 1 + Age + I(Age^2) + (1 + Age|ChildID) +
+                  Age * Birthweight + Age * GenderID, 
+                data=df_wide, REML=TRUE)
