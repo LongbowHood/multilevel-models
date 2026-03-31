@@ -1,0 +1,253 @@
+---
+title: "Multilevel models for longitudinal data"
+author: "Maria Levina, Rahul Vishwkarma"
+date: "2026-03-31"
+output: 
+  pdf_document:
+    citation_package: biblatex
+    toc: true
+    toc_depth: 2
+fontsize: 12pt
+geometry: margin=2.5cm
+header-includes:
+  - \usepackage{setspace} 
+  - \onehalfspacing
+  - \usepackage{amsmath, amsfonts, amssymb}
+  - \usepackage{booktabs}
+  - \usepackage{csquotes}
+  - \usepackage{graphicx}
+  - \usepackage{xcolor}
+  - \usepackage{hyperref}
+  - \usepackage{etoolbox}
+  - \AtBeginEnvironment{Shaded}{\setstretch{1}}
+  - \usepackage{titlesec}
+  - \titlespacing*{\section}{0pt}{*1}{*0.5}
+  - \titlespacing*{\subsection}{0pt}{*0.8}{*0.4}
+  - \titlespacing*{\subsubsection}{0pt}{*0.6}{*0.3} 
+bibliography: quellen.bib
+biblio-style: numeric
+nocite: | 
+  @R-manual_2021
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  comment = NA,
+  fig.align = 'center',
+  tidy = FALSE,
+  warning=FALSE, error=FALSE, message=FALSE
+)
+
+knitr::knit_hooks$set(output = function(x, options) {
+  paste(trimws(x), collapse = "\n")  # removes extra blank lines
+})
+
+library(knitr)
+```
+
+\newpage
+
+# Motivation
+
+Longitudinal studies are very common in various fields like psychology, medicine, education, economics, and sociology, and numerous examples and collections of longitudinal data can be found online (see, for instance, [Atlas of longitudinal studies](https://atlaslongitudinaldatasets.ac.uk/)). Longitudinal studies are designed to observe a sample over time to extract knowledge about patterns of trends and fluctuations in the general population. The same group of subjects, which may be single persons or groups/organizations, is tracked over time and its characteristics of interest are observed.
+
+In this work, we will take a closer look at an alternative method to analyze longitudinal data using the multilevel modeling framework. This method has several advantages over the traditional Repeated-Measures ANOVA approach and allows analyzing many more real-world longitudinal datasets. Here we will use an example dataset to showcase the multilevel modeling approach and go through the analysis step by step, providing R code to build models and create figures and its output.
+
+# Setup
+
+## Import
+In the following we will use implementation of multilevel models from the package `lme4` [@lme4_2015] as well as statistical tests from package `lmerTest` [@lmertest_2017]. We mostly use `ggplot2` [@ggplot2_2016] for graphics. So the following lines need to be executed for initial setup (after successful package installation):
+```{r import}
+  library("lme4")
+  library("lmerTest")
+  library("ggplot2")
+  library("dplyr")
+```
+
+\subsection{Example dataset}
+As mentioned above we will use an example to illustrate multilevel approach. Here a dataset from the collection of Centre for Multilevel Modelling, University of Bristol is taken, which can be accessed via [this link](https://www.bristol.ac.uk/cmm/learning/support/datasets/). We have chosen a dataset describing weight gains of 568 Asian children in a British community over several weeks after birth. The children were measured on up to five occasions visiting a clinic roughly to target examination dates of 6 weeks, then 8, 12, 27 months. Additional variables recorded were weight at birth and sex of a baby. 
+
+The code below shows how to load the dataset and convert it to format which suits best for further analysis. Here we read the single lines of the .DAT file and then convert resulting string to separate rows and further to single values using indexes.
+```{r data_import}
+  # Read the file line by line and convert to one single string
+  data_path = "asian/ASIAN.DAT"
+  data_raw <- toString(readLines(data_path))
+
+  # Split the long string by commas
+  data_raw <- strsplit(data_raw, ", ")
+
+  # Create a one-column data frame
+  dataset <- data.frame(data_raw)
+  colnames(dataset) <- "raw"
+
+  # Extract columns
+  extract_columns <- function(idxs, df){
+      column = sapply(df, substr, start = idxs[1], stop = idxs[2])
+      return(column)
+  }
+
+  # Define start and end positions for each column
+  col_idxs = list(c(1,4), # ChildID: characters 1-4
+                  c(5,7), # Age: characters 5-7
+                  c(8,12), # Weight: characters 8-12
+                  c(13,16), # Birthweight: characters 13-16
+                  c(17,17)) # Gender: character 17
+
+  col_list <- lapply(col_idxs, extract_columns, df = dataset) # 5
+
+  # Assign extracted columns to new variables in the data frame
+  dataset$ChildID <- as.vector(col_list[[1]])
+  dataset$Age <- as.vector(col_list[[2]])
+  dataset$Weight <- as.vector(col_list[[3]])
+  dataset$Birthweight <- as.vector(col_list[[4]])
+  dataset$Gender <- as.vector(col_list[[5]])
+
+  dataset <- dataset[,-1]
+```
+
+# Challenges of longitudinal data
+
+## Levels of analysis and time continuum
+Longitudinal studies are very popular despite being quite complex and expensive to convey [@hoffman_2015]. It naturally depends on the scope of a study: how large the study sample is, how long are study subjects tracked for and even how probable a drop-out is. However, people are hard to track in general and measures need to be well-documented over time and comparable, i.e. measure methods need to stay consistent. 
+
+Nevertheless, analysis of repeated measures of several subjects is quite useful. They make different levels of analysis accessible:
+1. Within-person / intra-individual analysis: relationships among intra-individual differences in time-variant variables.
+2. Between-person / inter-individual analysis: relationships among inter-individual differences in time-invariant variables.
+
+From now on, we will often refer to the former level as "level 1 analysis" and to the latter as "level 2 analysis" respectively. It is also important to differentiate - depending on the goal of the study, - whether change or fluctuation in target value should be investigated. In @hoffman_2015 the two terms are use to describe different kinds of longitudinal variability. Here, change describes systematic increase or decrease over time, often in longer perspective, while fluctuation usually refers to undirected variation over time on short-term horizons.
+
+## Model for mean and model for variance
+
+Models fo change and fluctuation using longitudinal data are similar to generalized linear models, however, assumptions about the data are different. To make these differences more clear, we will first introduce concepts of model for mean and model for variance (for more details see @hoffman_2015). 
+
+A model for mean describes structural part of the model, i.e. how does the outcome depend on regressor values for a study subject. It includes *fixed effects* of the covariates, where *fixed* means that the effect is same for all subjects. In the model for the mean a choice should be made, what regressors should be taken in account and in which form. This choice is usually based on specific research question. 
+
+A model for variance describes, on the other hand, the distribution of residuals of the outcome. A separate model for variance allows us to model  patterns of variance and covariance in residuals, which introduces great flexibility compared to simplifying assumptions for variance structure in generalized linear models or ANOVA. There residuals are often assumed to be normally distributed and independent across persons, with constant variance across persons. That often doesn't hold for real-world longitudinal data [@hoffman_2015]. Modeling variance separately also allows to include so-called *random effects* of covariates. Random effects allow every study subject to have its own effect of the same predictor. Addition of random effects allow greater flexibility - variance between and within a person can be distinguished. 
+
+## Models for repeated measures
+
+Traditional approach for modeling longitudinal data - **R**epeated **M**easures **An**alysis **o**f **Va**riance (RM-ANOVA) accounts for dependency of residuals within one unit/subject, but still assumes:
+ - Normal distribution of residuals;
+ - Homoscedasticity - constant variance over time points;
+ - Compound symmetry - equal variances and equal covariances over subjects
+
+Moreover, the goal of RM-ANOVA model is not to represent the change and fluctuation in the target variable in some general functional form, but to "reproduce" the observed mean per occasion using fixed effects equal to the number of occasions minus 1. [@hoffman_2015, p.96]
+This sets an additional constraint to data such as equal intervals between observation time points as well as same time points for every participant, which is often hard to implement in real life. Also one could imagine that it may happen quite often, that a participant doesn't show up once or drops of out of study completely due to any possible reason. RM-ANOVA cannot handle missing data, because it requires all observations for all subjects and time points to be present. Therefore all those subjects where at least one observation is missing is removed from the dataset. And many datasets cannot be analyzed with this method at all.
+
+Therefore, a method that can accommodate violations of these requirements and still deliver a reliable estimation of change and fluctuations over time is preferable. Multilevel models for longitudinal data cover all of the named disadvantages and have less strict assumptions about data distribution. Therefore, they represent an attractive alternative to RM-ANOVA.
+
+\subsection{Data preprocessing}
+
+An important part of any analysis is data exploration and preparation. If we look at the data example above, we can see that dataset consists of five variables: ID of a child, age (in days), weight (in grams), birth weight (in grams) and gender (encoded as 1 or 2). First of all, we want to ensure the correct type of variable for each column (integer/factor/string). We also change encoding of gender to dummy encoding (with 1 for girls and 0 for boys respectively) and store numeric values and category name in two separate columns (see code below). 
+
+We also calculate number of observations for each child to see, whether the dataset is balanced across subjects. We can already see from the first 6 observations that this is not the case here. 
+
+```{r data_prep, eval = TRUE}
+  # Preprocess columns
+  dataset[, 2:4] <- sapply(dataset[,2:4], as.integer)
+  dataset$ChildID <- as.factor(gsub(" ", "", dataset$ChildID))
+ 
+  # Decode gender
+  dataset$GenderID <- as.integer(dataset$Gender) - 1
+  dataset$Gender <- factor(dataset$GenderID, labels = c("Boy", "Girl"))
+
+  # Number of observations
+  dataset$NObs <- as.vector(table(dataset$ChildID)[dataset$Child])
+  kable(head(dataset))
+```
+
+Furthermore, we can plot observations against time to see, how much the measurement times vary from child to child  - we already know from the dataset description, that intervals between measurements are not equal and may differ from case to case. 
+
+```{r vis_all_obs}
+plot_all_obs <- function(varx, vary, df,
+                             transfx = "", transfy = ""){
+    ggplot(df, aes(x = .data[[varx]], y = .data[[vary]])) + 
+    coord_cartesian(xlim = c(min(df[varx]), max(df[varx])),
+                    ylim = c(min(df[vary]), max(df[vary]))) +
+    geom_line(aes(group=ChildID), col = "darkgray") + 
+    geom_point(aes(fill=as.factor(ChildID)), pch=21, size=2, stroke=1) + 
+    scale_x_continuous(name = paste0("Age",transfx), 
+                       breaks=round(seq(min(df[varx]), max(df[varx]), length.out = 10)))  + 
+    scale_y_continuous(name = paste0("Weight", transfy),
+                       limits=range(df[,vary])) + 
+    theme_bw() + theme(axis.text.x=element_text(size=12, colour="black"),
+                       axis.text.y=element_text(size=12, colour="black"), 
+                       axis.title=element_text(size=12,face="bold")) +
+    theme(strip.text.x = element_text(size = 12)) + theme(legend.position="none")}
+
+plot_all_obs("Age", "Weight", dataset,  
+             transfx = " (in days)", transfy = " (in grams)")
+```
+
+To observe, how imbalanced the dataset is, we can create multiple plots, grouping data by number of observations for single child. This can be done by adding a line `facet_wrap(~.data[["NObs"]])` to the definition of `plot_all_obs()` function above (here we created a separate function with alterations). We can also calculate absolute frequency for `NObs` variable to determine how many participant have a certain number of observations.
+
+```{r code_vis_facet_obs, include = FALSE}
+    plot_facet_var <- function(varx, vary, df, var_facet,
+                         transfx = "", transfy = ""){
+  
+    ggplot(df, aes(x = .data[[varx]], y = .data[[vary]])) + 
+    coord_cartesian(xlim = c(min(df[varx]), max(df[varx])),
+                    ylim = c(min(df[vary]), max(df[vary]))) +
+    geom_line(aes(group=ChildID), col = "darkgray") + 
+    geom_point(aes(fill=as.factor(ChildID)), pch=21, size=2, stroke=1) +
+    facet_wrap(~.data[[var_facet]]) +
+    scale_x_continuous(name = paste0("Age",transfx), 
+                       breaks=round(seq(min(df[varx]), max(df[varx]), length.out = 6)))  + 
+    scale_y_continuous(name = paste0("Weight", transfy),
+                       limits=range(df[,vary])) + 
+    theme_bw() + theme(axis.text.x=element_text(size=12, colour="black"),
+                       axis.text.y=element_text(size=12, colour="black"), 
+                       axis.title=element_text(size=12,face="bold")) +
+    theme(strip.text.x = element_text(size = 12)) + theme(legend.position="none")
+}
+```
+
+```{r vis_facet_obs}
+
+plot_facet_var("Age", "Weight", df=dataset, "NObs", 
+               transfx = " (in days)", transfy = " (in grams)")
+
+kable(t(table(unique(dataset[, c("ChildID", "NObs")])$NObs)))
+```
+Here several observations can be made. First of all, both number or observations and measurement time points vary strongly over participants, which justifies use of multilevel models to analyse this dataset. Secondly, 91 participants were only observed once after birth, which makes these observations not longitudinal at all. They will be excluded for later. Thirdly, the original scale of the variables produces quite large numerical values, which may negatively affect the numerical estimation of models later. Therefore we need to rescale both target variable and covariates.
+
+We can also observe, that intercept and slope varies from participant to participant, which can also be modeled by multilevel models. In addition, growth rate is not constant - babies grow very fast directly after birth and then growth rate reduces after some time, - which means that we can include some non-linearity in the model to improve the fit. These general tendencies are present in all growth curves, independent of number of observations.
+
+# Multilevel models
+
+We will now explain the concepts of multilevel modelling for longitudinal data on this example. For this we will fit different models of increasing complexity and compare them based on different criteria. Using these models we can try to answer following research questions:
+1. How children’s weight changes in the early stages of life?
+2. Whether and how those growth patterns differ between individuals?
+3. Are there any differences between children of different gender?
+4. Is there any influence of birth weight on post-natal development?
+
+## Random intercept model
+Multilevel models are sometimes called mixed models, and these two names highlight different aspects of the very same method. They are called "mixed" because both fixed and random effects of predicted are allowed, and "multilevel" stands for separate modeling of parameters and their (co-)variances, i.e. on different levels. Key idea is that the observed variability comes from two sources: from both between-person differences and within-person fluctuations. Level 1 analysis therefore represents how a single subject characteristic changes with time, whereas level 2 analysis represent overall differences between subjects. 
+
+The simplest multilevel model would be a random intercept model. That means that we have constant predictions for a subject over time, but we allow the intercept to vary over subjects. It can be written as follows in multilevel notation:
+
+*Level 1:*  $y_{ti} = \beta_{0i} + e_{ti}, \qquad e_{ti} \sim \mathcal{N}(0, \sigma_e^2)$
+
+*Level 2:*  $\beta_{0i} = \gamma_{00} + U_{0i}, \qquad U_{0i} \sim \mathcal{N}(0, \tau_{U_0}^2)$, where:
+
+- $y_{ti}$ — observation of dependent variable of unit $i = 1, \ldots, M$, at time point $t \in \{t_1, \ldots, t_N\}$  
+
+- $\gamma_{00}$ — fixed intercept  
+
+- $U_{0i}$ — random intercept, varies over individuals 
+
+All multilevel models, as stated above, assume observations from different subjects to be independent, but correlated within the subject. Also the dependent variable is assumed to be normally distributed.
+
+
+## Random intercept, fixed linear time model
+
+## Random linear time model
+
+## Conditional linear model
+
+## Beyond linearity: quadratic time effect
+
+# Model diagnostics
+
+# Discussion and outlook
