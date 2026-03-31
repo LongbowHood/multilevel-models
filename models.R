@@ -1,8 +1,6 @@
 library("lme4")
 library("lmerTest")
 library("ggplot2")
-library("dplyr")
-library("lmerTest")
 
 ####################################
 ###             Plan             ###

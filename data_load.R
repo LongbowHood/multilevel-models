@@ -65,13 +65,7 @@ birthweight$Weight <- birthweight$Birthweight # add another column of weight
 head(birthweight)
 
 # repeated measurements are stored in different columns.
-data_wide <- data # ?? This is long too
-
-
-
-birthweight
-
-data
+data_wide <- data 
 
 data_long <- rbind(data[,c("ChildID", "Age", "Weight", "Gender")],
                    birthweight[,c("ChildID", "Age", "Weight", "Gender")]) 
@@ -92,6 +86,7 @@ data_long$GenderID <- as.integer(data_long$Gender) - 1
 data_long$Gender <- factor(data_long$GenderID, labels = c("Boy", "Girl"))
 
 head(data_long) # 2140 x 6
+head(data_wide)
  
 # remove unneccessary objects from the environment
 rm(data_raw, data, col_list, col_idxs, birthweight, data_path, extract_columns)
