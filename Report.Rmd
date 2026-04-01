@@ -73,6 +73,7 @@ The code below shows how to load the dataset and convert it to format which suit
   data_path = "asian/ASIAN.DAT"
   data_raw <- toString(readLines(data_path))
 
+  
   # Split the long string by commas
   data_raw <- strsplit(data_raw, ", ")
 
@@ -151,7 +152,7 @@ We also calculate number of observations for each child to see, whether the data
   kable(head(dataset))
 ```
 
-Furthermore, we can plot observations against time to see, how much the measurement times vary from child to child  - we already know from the dataset description, that intervals between measurements are not equal and may differ from case to case. 
+Furthermore, we can plot observations against time to see, how much the measurement times vary from child to child  - we already know from the dataset description, that intervals between measurements are not equal and may differ from case to case (see Figure 1). 
 
 ```{r vis_all_obs, fig.cap="Children weight observations over time", fig.width = 6, fig.height = 4}
 plot_all_obs <- function(varx, vary, df,
@@ -162,19 +163,21 @@ plot_all_obs <- function(varx, vary, df,
     geom_line(aes(group=ChildID), col = "darkgray") + 
     geom_point(aes(fill=as.factor(ChildID)), pch=21, size=2, stroke=1) + 
     scale_x_continuous(name = paste0("Age",transfx), 
-                       breaks=round(seq(min(df[varx]), max(df[varx]), length.out = 10)))  + 
+                       breaks=round(seq(min(df[,varx]), max(df[,varx]), 
+                                        length.out = 10)))  + 
     scale_y_continuous(name = paste0("Weight", transfy),
                        limits=range(df[,vary])) + 
     theme_bw() + theme(axis.text.x=element_text(size=12, colour="black"),
                        axis.text.y=element_text(size=12, colour="black"), 
                        axis.title=element_text(size=12,face="bold")) +
-    theme(strip.text.x = element_text(size = 12)) + theme(legend.position="none")}
+    theme(strip.text.x = element_text(size = 12)) + 
+    theme(legend.position="none")}
 
 plot_all_obs("Age", "Weight", dataset,  
              transfx = " (in days)", transfy = " (in grams)")
 ```
 
-To observe data imbalance we can create multiple plots, grouping data by number of observations for single child (see Figure ...). This can be done by adding a line `facet_wrap(~.data[["NObs"]])` to the definition of `plot_all_obs()` function above (here we created a separate function with alterations). We can also calculate absolute frequency for number of visits depending on gender as in Table 2.
+To observe data imbalance we can create multiple plots, grouping data by number of observations for single child (see Figure 2). This can be done by adding a line `facet_wrap(~.data[["NObs"]])` to the definition of `plot_all_obs()` function above (here we created a separate function with alterations). We can also calculate absolute frequency for number of visits depending on gender as in Table 2.
 
 ```{r code_vis_facet_obs, include = FALSE}
     plot_facet_var <- function(varx, vary, df, var_facet,
@@ -197,15 +200,16 @@ To observe data imbalance we can create multiple plots, grouping data by number 
 }
 ```
 
-```{r vis_facet_obs, fig.cap="Original observations by number of visits in the clinic", fig.width = 7, fig.height = 5}
+```{r vis_facet_obs, fig.cap="Original observations by number of visits in the clinic", fig.width = 7, fig.height = 5, tab.cap = "Number of participants per number of observations"}
 
 plot_facet_var("Age", "Weight", df=dataset, "NObs", 
                transfx = " (in days)", transfy = " (in grams)")
-```
-```{r count_obs, tab.cap = "Number of participants per number of observations"}
+
 kable(table(dataset$Gender, dataset$NObs) / rep(1:5, each = 2))
 ```
-Here several observations can be made. First of all, both number or observations and measurement time points vary strongly over participants, which justifies use of multilevel models to analyse this dataset. Secondly, 91 participants were only observed once after birth, which makes these observations not longitudinal at all. They will be excluded for later. Thirdly, dataset is balanced w.r.t. gender distribution. Lastly, the original scale of the variables produces quite large numerical values, which may negatively affect the numerical estimation of models later. Therefore we need to rescale both target variable and covariates. For this we will first convert grams into kilograms and days into years and then center rescaled variables by subtracting sample mean:
+
+Here several observations can be made. First of all, both number or observations and measurement time points vary strongly over participants, which justifies use of multilevel models to analyse this dataset. Secondly, 91 participants were only observed once after birth, which makes these observations not longitudinal at all. They will be excluded for later. Thirdly, dataset is balanced w.r.t. gender distribution.
+Lastly, the original scale of the variables produces quite large numerical values, which may negatively affect the numerical estimation of models later. Therefore we need to rescale both target variable and covariates. For this we will first convert grams into kilograms and days into years and then center rescaled variables by subtracting sample mean:
 ```{r data_prep_final}
 # Exclude the data with 1 observation only (not longitudinal data)
 dataset <- dataset[dataset$NObs > 1,]
@@ -216,7 +220,8 @@ dataset$r_Age_years <- dataset$Age / 365
 
 dataset$c_Age_years <- (dataset$r_Age_years - mean(dataset$r_Age_years))
 dataset$c_Weight_kg <- (dataset$r_Weight - mean(dataset$r_Weight))
-dataset$c_Birthweight_kg <- (dataset$r_Birthweight - mean(dataset$r_Birthweight))
+dataset$c_Birthweight_kg <- (dataset$r_Birthweight - 
+                               mean(dataset$r_Birthweight))
 
 df_final = dataset[c("ChildID", "Gender", "NObs", "GenderID",
                       "c_Weight_kg", "c_Birthweight_kg", "c_Age_years")]
@@ -320,8 +325,6 @@ Linear effect of time is estimated at $\hat \gamma_{10} = 3.67$ is considered si
 ```{r summary_model02, eval = FALSE}
 summary(model02)
 
-#Linear mixed model fit by REML. t-tests use Satterthwaite's method 
-#[lmerModLmerTest]
 # Formula: Weight ~ 1 + Age + (1 | ChildID)
 #    Data: df_final
 # 
@@ -484,7 +487,8 @@ model05 <- lmer(Weight ~ 1 + Age + I(Age^2) + (1|ChildID),
 model06 <- lmer(Weight ~ 1 + Age + I(Age^2) + (1 + Age|ChildID), 
                     data=df_final, REML=TRUE)
 plot_results(df_final, model06, n=5, ncols=5,
-             model_name = "Model 6: random intercept, random linear, fixed quadratic time")
+             model_name = paste(c("Model 6: random intercept, random linear,",
+                                  "fixed quadratic time")))
 ```
 
 ```{r, eval = FALSE}
