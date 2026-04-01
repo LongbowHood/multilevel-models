@@ -1,0 +1,1091 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+  12pt,
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{setspace}
+\usepackage{amsmath, amsfonts, amssymb}
+\usepackage{booktabs}
+\usepackage{csquotes}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{etoolbox}
+\AtBeginEnvironment{Shaded}{\setstretch{1}}
+\usepackage{titlesec}
+\titlespacing*{\section}{0pt}{*0.7}{*0.3}
+\titlespacing*{\subsection}{0pt}{*0.5}{*0.2}
+\titlespacing*{\subsubsection}{0pt}{*0.3}{*0.1}
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\usepackage[style=numeric,]{biblatex}
+\addbibresource{quellen.bib}
+\nocite{R-manual_2021}
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={Multilevel models for longitudinal data},
+  pdfauthor={Maria Levina, Rahul Vishwkarma},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Multilevel models for longitudinal data}
+\author{Maria Levina, Rahul Vishwkarma}
+\date{2026-03-31}
+
+\begin{document}
+\maketitle
+
+{
+\setcounter{tocdepth}{2}
+\tableofcontents
+}
+\newpage
+
+\section{Motivation}\label{motivation}
+
+Longitudinal studies are very common in various fields like psychology,
+medicine, education, economics, and sociology, and numerous examples and
+collections of longitudinal data can be found online (see, for instance,
+\href{https://atlaslongitudinaldatasets.ac.uk/}{Atlas of longitudinal
+studies}). Longitudinal studies are designed to observe a sample over
+time to extract knowledge about patterns of trends and fluctuations in
+the general population. The same group of subjects, which may be single
+persons or groups/organizations, is tracked over time and its
+characteristics of interest are observed.
+
+In this work, we will take a closer look at an alternative method to
+analyze longitudinal data using the multilevel modeling framework. This
+method has several advantages over the traditional approaches and allows
+analyzing more real-world longitudinal datasets. Here we will use an
+example dataset to showcase the multilevel modeling approach and go
+through the analysis step by step, providing R code to build models and
+create figures and its output.
+
+\section{Setup}\label{setup}
+
+\subsection{Import}\label{import}
+
+In the following we will use implementation of multilevel models from
+the package \texttt{lme4} \autocite{lme4_2015} as well as statistical
+tests from package \texttt{lmerTest} \autocite{lmertest_2017}. We mostly
+use \texttt{ggplot2} \autocite{ggplot2_2016} for graphics and
+\texttt{knitr} and \texttt{pander} \autocite{knitr_2014} for R Markdown
+generation.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+  \FunctionTok{library}\NormalTok{(}\StringTok{"lme4"}\NormalTok{)}
+  \FunctionTok{library}\NormalTok{(}\StringTok{"lmerTest"}\NormalTok{)}
+  \FunctionTok{library}\NormalTok{(}\StringTok{"ggplot2"}\NormalTok{)}
+  \FunctionTok{library}\NormalTok{(}\StringTok{"dplyr"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{Example dataset}
+
+As mentioned above we will use an example to illustrate multilevel
+approach. Here a dataset from the collection of Centre for Multilevel
+Modelling, University of Bristol is taken, which can be accessed via
+\href{https://www.bristol.ac.uk/cmm/learning/support/datasets/}{this
+link}. We have chosen a dataset describing weight gains of 568 Asian
+children in a British community over several weeks after birth. The
+children were measured on up to five occasions visiting a clinic roughly
+to target examination dates of 6 weeks, then 8, 12, 27 months.
+Additional variables recorded were weight at birth and sex of a baby.
+
+The code below shows how to load the dataset and convert it to format
+which suits best for further analysis.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+  \CommentTok{\# Read the file line by line and convert to one single string}
+\NormalTok{  data\_path }\OtherTok{=} \StringTok{"asian/ASIAN.DAT"}
+\NormalTok{  data\_raw }\OtherTok{\textless{}{-}} \FunctionTok{toString}\NormalTok{(}\FunctionTok{readLines}\NormalTok{(data\_path))}
+
+  \CommentTok{\# Split the long string by commas}
+\NormalTok{  data\_raw }\OtherTok{\textless{}{-}} \FunctionTok{strsplit}\NormalTok{(data\_raw, }\StringTok{", "}\NormalTok{)}
+
+  \CommentTok{\# Create a one{-}column data frame}
+\NormalTok{  dataset }\OtherTok{\textless{}{-}} \FunctionTok{data.frame}\NormalTok{(data\_raw)}
+  \FunctionTok{colnames}\NormalTok{(dataset) }\OtherTok{\textless{}{-}} \StringTok{"raw"}
+
+  \CommentTok{\# Extract columns}
+\NormalTok{  extract\_columns }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(idxs, df)\{}
+\NormalTok{      column }\OtherTok{=} \FunctionTok{sapply}\NormalTok{(df, substr, }\AttributeTok{start =}\NormalTok{ idxs[}\DecValTok{1}\NormalTok{], }\AttributeTok{stop =}\NormalTok{ idxs[}\DecValTok{2}\NormalTok{])}
+      \FunctionTok{return}\NormalTok{(column)\}}
+
+  \CommentTok{\# Define start and end positions for each column}
+\NormalTok{  col\_idxs }\OtherTok{=} \FunctionTok{list}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{4}\NormalTok{), }\CommentTok{\# ChildID: characters 1{-}4}
+                  \FunctionTok{c}\NormalTok{(}\DecValTok{5}\NormalTok{,}\DecValTok{7}\NormalTok{), }\CommentTok{\# Age: characters 5{-}7}
+                  \FunctionTok{c}\NormalTok{(}\DecValTok{8}\NormalTok{,}\DecValTok{12}\NormalTok{), }\CommentTok{\# Weight: characters 8{-}12}
+                  \FunctionTok{c}\NormalTok{(}\DecValTok{13}\NormalTok{,}\DecValTok{16}\NormalTok{), }\CommentTok{\# Birthweight: characters 13{-}16}
+                  \FunctionTok{c}\NormalTok{(}\DecValTok{17}\NormalTok{,}\DecValTok{17}\NormalTok{)) }\CommentTok{\# Gender: character 17}
+
+\NormalTok{  col\_list }\OtherTok{\textless{}{-}} \FunctionTok{lapply}\NormalTok{(col\_idxs, extract\_columns, }\AttributeTok{df =}\NormalTok{ dataset) }\CommentTok{\# 5}
+
+  \CommentTok{\# Assign extracted columns to new variables in the data frame}
+\NormalTok{  dataset}\SpecialCharTok{$}\NormalTok{ChildID }\OtherTok{\textless{}{-}} \FunctionTok{as.vector}\NormalTok{(col\_list[[}\DecValTok{1}\NormalTok{]])}
+\NormalTok{  dataset}\SpecialCharTok{$}\NormalTok{Age }\OtherTok{\textless{}{-}} \FunctionTok{as.vector}\NormalTok{(col\_list[[}\DecValTok{2}\NormalTok{]])}
+\NormalTok{  dataset}\SpecialCharTok{$}\NormalTok{Weight }\OtherTok{\textless{}{-}} \FunctionTok{as.vector}\NormalTok{(col\_list[[}\DecValTok{3}\NormalTok{]])}
+\NormalTok{  dataset}\SpecialCharTok{$}\NormalTok{Birthweight }\OtherTok{\textless{}{-}} \FunctionTok{as.vector}\NormalTok{(col\_list[[}\DecValTok{4}\NormalTok{]])}
+\NormalTok{  dataset}\SpecialCharTok{$}\NormalTok{Gender }\OtherTok{\textless{}{-}} \FunctionTok{as.vector}\NormalTok{(col\_list[[}\DecValTok{5}\NormalTok{]])}
+
+\NormalTok{  dataset }\OtherTok{\textless{}{-}}\NormalTok{ dataset[,}\SpecialCharTok{{-}}\DecValTok{1}\NormalTok{]}
+\end{Highlighting}
+\end{Shaded}
+
+\section{Challenges of longitudinal
+data}\label{challenges-of-longitudinal-data}
+
+\subsection{Levels of analysis and time
+continuum}\label{levels-of-analysis-and-time-continuum}
+
+Longitudinal studies are very popular despite being quite complex and
+expensive to convey \autocite{hoffman_2015}. It naturally depends on the
+scope of a study: how large the study sample is, how long are study
+subjects tracked for and even how probable a drop-out is. However,
+people are hard to track in general and measures need to be
+well-documented over time and comparable, i.e.~measure methods need to
+stay consistent.
+
+Nevertheless, analysis of repeated measures of several subjects is quite
+useful. They make different levels of analysis accessible:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  Within-person / intra-individual analysis: relationships among
+  intra-individual differences in time-variant variables. (level 1
+  analysis)
+\item
+  Between-person / inter-individual analysis: relationships among
+  inter-individual differences in time-invariant variables. (level 2
+  analysis)
+\end{enumerate}
+
+It is also important to differentiate, whether change or fluctuation in
+target value should be investigated. In \textcite{hoffman_2015} the two
+terms are use to describe different kinds of longitudinal variability.
+Here, change describes systematic increase or decrease over time, often
+in longer perspective, while fluctuation usually refers to undirected
+variation over time on short-term horizons.
+
+\subsection{Model for mean and model for
+variance}\label{model-for-mean-and-model-for-variance}
+
+A model for mean describes structural part of the model, i.e.~how does
+the outcome depend on regressor values for a study subject. It includes
+\emph{fixed effects} of the covariates, where \emph{fixed} means that
+the effect is same for all subjects. In the model for the mean a choice
+should be made, what regressors should be taken in account and in which
+form. This choice is usually based on specific research question.
+
+A model for variance describes, on the other hand, the distribution of
+residuals of the outcome. Separate model for variance allows us to model
+patterns of variance and covariance in residuals, which introduces great
+flexibility compared to overly simplifying assumptions for variance
+structure in generalized linear models or ANOVA. There residuals are
+often assumed to be normally distributed and independent across persons,
+with constant variance across persons. That often doesn't hold for
+real-world longitudinal data \autocite{hoffman_2015}. Modeling variance
+separately also allows to include so-called \emph{random effects} of
+covariates, when every study subject has its own effect of the same
+predictor. Addition of random effects allow greater flexibility -
+variance between and within a person can be distinguished.
+
+\subsection{Models for repeated
+measures}\label{models-for-repeated-measures}
+
+Traditional approach for modeling longitudinal data - \textbf{R}epeated
+\textbf{M}easures \textbf{An}alysis \textbf{o}f \textbf{Va}riance
+(RM-ANOVA) accounts for dependency of residuals within one unit/subject,
+but still assumes normal distribution of residuals as well as
+homoscedasticity (constant variance over time points) and compound
+symmetry (equal variances and equal covariances over subjects).
+
+Moreover, the goal of RM-ANOVA model is not to represent the change and
+fluctuation in the target variable in some general functional form, but
+to ``reproduce'' the observed mean per occasion using fixed effects
+equal to the number of occasions minus 1 \autocite[p.96]{hoffman_2015}.
+This sets an additional constraint to data such as equal intervals
+between observation time points as well as same time points for every
+participant, which is often hard to implement in real life.
+
+Also one could imagine that it may happen quite often, that a
+participant doesn't show up once or drops of out of study completely due
+to any possible reason. RM-ANOVA cannot handle missing data, because it
+requires all observations for all subjects and time points to be
+present. Therefore all those subjects where at least one observation is
+missing is removed from the dataset. And many datasets cannot be
+analyzed with this method at all. Multilevel models for longitudinal
+data cover all of the named disadvantages and have less strict
+assumptions about data distribution. Therefore, they represent an
+attractive alternative to RM-ANOVA.
+
+\subsection{Data preprocessing}
+
+An important part of any analysis is data exploration and preparation.
+In the example above, the dataset consists of five variables: ID of a
+child, age (in days), weight (in grams), birth weight (in grams) and
+gender (encoded as 1 or 2). First of all, we want to ensure the correct
+type of variable for each column (integer/factor/string). We also change
+encoding of gender to dummy encoding (with 1 for girls and 0 for boys
+respectively) and store numeric values and category name in two separate
+columns (see code below).
+
+We also calculate number of observations for each child to see, whether
+the dataset is balanced across subjects. We can already see from the
+first 6 observations that this is not the case here.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+  \CommentTok{\# Preprocess columns}
+\NormalTok{  dataset[, }\DecValTok{2}\SpecialCharTok{:}\DecValTok{4}\NormalTok{] }\OtherTok{\textless{}{-}} \FunctionTok{sapply}\NormalTok{(dataset[,}\DecValTok{2}\SpecialCharTok{:}\DecValTok{4}\NormalTok{], as.integer)}
+\NormalTok{  dataset}\SpecialCharTok{$}\NormalTok{ChildID }\OtherTok{\textless{}{-}} \FunctionTok{as.factor}\NormalTok{(}\FunctionTok{gsub}\NormalTok{(}\StringTok{" "}\NormalTok{, }\StringTok{""}\NormalTok{, dataset}\SpecialCharTok{$}\NormalTok{ChildID))}
+ 
+  \CommentTok{\# Decode gender}
+\NormalTok{  dataset}\SpecialCharTok{$}\NormalTok{GenderID }\OtherTok{\textless{}{-}} \FunctionTok{as.integer}\NormalTok{(dataset}\SpecialCharTok{$}\NormalTok{Gender) }\SpecialCharTok{{-}} \DecValTok{1}
+\NormalTok{  dataset}\SpecialCharTok{$}\NormalTok{Gender }\OtherTok{\textless{}{-}} \FunctionTok{factor}\NormalTok{(dataset}\SpecialCharTok{$}\NormalTok{GenderID, }\AttributeTok{labels =} \FunctionTok{c}\NormalTok{(}\StringTok{"Boy"}\NormalTok{, }\StringTok{"Girl"}\NormalTok{))}
+
+  \CommentTok{\# Number of observations}
+\NormalTok{  dataset}\SpecialCharTok{$}\NormalTok{NObs }\OtherTok{\textless{}{-}} \FunctionTok{as.vector}\NormalTok{(}\FunctionTok{table}\NormalTok{(dataset}\SpecialCharTok{$}\NormalTok{ChildID)[dataset}\SpecialCharTok{$}\NormalTok{Child])}
+  \FunctionTok{kable}\NormalTok{(}\FunctionTok{head}\NormalTok{(dataset))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{longtable}[]{@{}lrrrlrr@{}}
+\toprule\noalign{}
+ChildID & Age & Weight & Birthweight & Gender & GenderID & NObs \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+2 & 377 & 10262 & 3360 & Girl & 1 & 2 \\
+2 & 825 & 14500 & 3360 & Girl & 1 & 2 \\
+3 & 54 & 4053 & 3310 & Girl & 1 & 4 \\
+3 & 242 & 8136 & 3310 & Girl & 1 & 4 \\
+3 & 377 & 9752 & 3310 & Girl & 1 & 4 \\
+3 & 825 & 13180 & 3310 & Girl & 1 & 4 \\
+\end{longtable}
+
+Furthermore, we can plot observations against time to see, how much the
+measurement times vary from child to child - we already know from the
+dataset description, that intervals between measurements are not equal
+and may differ from case to case.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{plot\_all\_obs }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(varx, vary, df,}
+                             \AttributeTok{transfx =} \StringTok{""}\NormalTok{, }\AttributeTok{transfy =} \StringTok{""}\NormalTok{)\{}
+    \FunctionTok{ggplot}\NormalTok{(df, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ .data[[varx]], }\AttributeTok{y =}\NormalTok{ .data[[vary]])) }\SpecialCharTok{+} 
+    \FunctionTok{coord\_cartesian}\NormalTok{(}\AttributeTok{xlim =} \FunctionTok{c}\NormalTok{(}\FunctionTok{min}\NormalTok{(df[varx]), }\FunctionTok{max}\NormalTok{(df[varx])),}
+                    \AttributeTok{ylim =} \FunctionTok{c}\NormalTok{(}\FunctionTok{min}\NormalTok{(df[vary]), }\FunctionTok{max}\NormalTok{(df[vary]))) }\SpecialCharTok{+}
+    \FunctionTok{geom\_line}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{group=}\NormalTok{ChildID), }\AttributeTok{col =} \StringTok{"darkgray"}\NormalTok{) }\SpecialCharTok{+} 
+    \FunctionTok{geom\_point}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{fill=}\FunctionTok{as.factor}\NormalTok{(ChildID)), }\AttributeTok{pch=}\DecValTok{21}\NormalTok{, }\AttributeTok{size=}\DecValTok{2}\NormalTok{, }\AttributeTok{stroke=}\DecValTok{1}\NormalTok{) }\SpecialCharTok{+} 
+    \FunctionTok{scale\_x\_continuous}\NormalTok{(}\AttributeTok{name =} \FunctionTok{paste0}\NormalTok{(}\StringTok{"Age"}\NormalTok{,transfx), }
+                       \AttributeTok{breaks=}\FunctionTok{round}\NormalTok{(}\FunctionTok{seq}\NormalTok{(}\FunctionTok{min}\NormalTok{(df[varx]), }\FunctionTok{max}\NormalTok{(df[varx]), }\AttributeTok{length.out =} \DecValTok{10}\NormalTok{)))  }\SpecialCharTok{+} 
+    \FunctionTok{scale\_y\_continuous}\NormalTok{(}\AttributeTok{name =} \FunctionTok{paste0}\NormalTok{(}\StringTok{"Weight"}\NormalTok{, transfy),}
+                       \AttributeTok{limits=}\FunctionTok{range}\NormalTok{(df[,vary])) }\SpecialCharTok{+} 
+    \FunctionTok{theme\_bw}\NormalTok{() }\SpecialCharTok{+} \FunctionTok{theme}\NormalTok{(}\AttributeTok{axis.text.x=}\FunctionTok{element\_text}\NormalTok{(}\AttributeTok{size=}\DecValTok{12}\NormalTok{, }\AttributeTok{colour=}\StringTok{"black"}\NormalTok{),}
+                       \AttributeTok{axis.text.y=}\FunctionTok{element\_text}\NormalTok{(}\AttributeTok{size=}\DecValTok{12}\NormalTok{, }\AttributeTok{colour=}\StringTok{"black"}\NormalTok{), }
+                       \AttributeTok{axis.title=}\FunctionTok{element\_text}\NormalTok{(}\AttributeTok{size=}\DecValTok{12}\NormalTok{,}\AttributeTok{face=}\StringTok{"bold"}\NormalTok{)) }\SpecialCharTok{+}
+    \FunctionTok{theme}\NormalTok{(}\AttributeTok{strip.text.x =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{size =} \DecValTok{12}\NormalTok{)) }\SpecialCharTok{+} \FunctionTok{theme}\NormalTok{(}\AttributeTok{legend.position=}\StringTok{"none"}\NormalTok{)\}}
+
+\FunctionTok{plot\_all\_obs}\NormalTok{(}\StringTok{"Age"}\NormalTok{, }\StringTok{"Weight"}\NormalTok{, dataset,  }
+             \AttributeTok{transfx =} \StringTok{" (in days)"}\NormalTok{, }\AttributeTok{transfy =} \StringTok{" (in grams)"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+
+{\centering \includegraphics{Report_files/figure-latex/vis_all_obs-1} 
+
+}
+
+\caption{Children weight observations over time}\label{fig:vis_all_obs}
+\end{figure}
+
+To observe data imbalance we can create multiple plots, grouping data by
+number of observations for single child (see Figure \ldots). This can be
+done by adding a line
+\texttt{facet\_wrap(\textasciitilde{}.data{[}{[}"NObs"{]}{]})} to the
+definition of \texttt{plot\_all\_obs()} function above (here we created
+a separate function with alterations). We can also calculate absolute
+frequency for number of visits depending on gender as in Table 2.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{plot\_facet\_var}\NormalTok{(}\StringTok{"Age"}\NormalTok{, }\StringTok{"Weight"}\NormalTok{, }\AttributeTok{df=}\NormalTok{dataset, }\StringTok{"NObs"}\NormalTok{, }
+               \AttributeTok{transfx =} \StringTok{" (in days)"}\NormalTok{, }\AttributeTok{transfy =} \StringTok{" (in grams)"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+
+{\centering \includegraphics{Report_files/figure-latex/vis_facet_obs-1} 
+
+}
+
+\caption{Original observations by number of visits in the clinic}\label{fig:vis_facet_obs}
+\end{figure}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{kable}\NormalTok{(}\FunctionTok{table}\NormalTok{(dataset}\SpecialCharTok{$}\NormalTok{Gender, dataset}\SpecialCharTok{$}\NormalTok{NObs) }\SpecialCharTok{/} \FunctionTok{rep}\NormalTok{(}\DecValTok{1}\SpecialCharTok{:}\DecValTok{5}\NormalTok{, }\AttributeTok{each =} \DecValTok{2}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{longtable}[]{@{}lrrrrr@{}}
+\caption{Number of participants per number of
+observations}\tabularnewline
+\toprule\noalign{}
+& 1 & 2 & 3 & 4 & 5 \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+& 1 & 2 & 3 & 4 & 5 \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Boy & 45 & 62 & 86 & 75 & 15 \\
+Girl & 46 & 79 & 83 & 68 & 9 \\
+\end{longtable}
+
+Here several observations can be made. First of all, both number or
+observations and measurement time points vary strongly over
+participants, which justifies use of multilevel models to analyse this
+dataset. Secondly, 91 participants were only observed once after birth,
+which makes these observations not longitudinal at all. They will be
+excluded for later. Thirdly, dataset is balanced w.r.t. gender
+distribution. Lastly, the original scale of the variables produces quite
+large numerical values, which may negatively affect the numerical
+estimation of models later. Therefore we need to rescale both target
+variable and covariates. For this we will first convert grams into
+kilograms and days into years and then center rescaled variables by
+subtracting sample mean:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Exclude the data with 1 observation only (not longitudinal data)}
+\NormalTok{dataset }\OtherTok{\textless{}{-}}\NormalTok{ dataset[dataset}\SpecialCharTok{$}\NormalTok{NObs }\SpecialCharTok{\textgreater{}} \DecValTok{1}\NormalTok{,]}
+
+\NormalTok{dataset}\SpecialCharTok{$}\NormalTok{r\_Weight }\OtherTok{\textless{}{-}}\NormalTok{ dataset}\SpecialCharTok{$}\NormalTok{Weight }\SpecialCharTok{/} \DecValTok{1000}
+\NormalTok{dataset}\SpecialCharTok{$}\NormalTok{r\_Birthweight }\OtherTok{\textless{}{-}}\NormalTok{ dataset}\SpecialCharTok{$}\NormalTok{Birthweight }\SpecialCharTok{/} \DecValTok{1000}
+\NormalTok{dataset}\SpecialCharTok{$}\NormalTok{r\_Age\_years }\OtherTok{\textless{}{-}}\NormalTok{ dataset}\SpecialCharTok{$}\NormalTok{Age }\SpecialCharTok{/} \DecValTok{365}
+
+\NormalTok{dataset}\SpecialCharTok{$}\NormalTok{c\_Age\_years }\OtherTok{\textless{}{-}}\NormalTok{ (dataset}\SpecialCharTok{$}\NormalTok{r\_Age\_years }\SpecialCharTok{{-}} \FunctionTok{mean}\NormalTok{(dataset}\SpecialCharTok{$}\NormalTok{r\_Age\_years))}
+\NormalTok{dataset}\SpecialCharTok{$}\NormalTok{c\_Weight\_kg }\OtherTok{\textless{}{-}}\NormalTok{ (dataset}\SpecialCharTok{$}\NormalTok{r\_Weight }\SpecialCharTok{{-}} \FunctionTok{mean}\NormalTok{(dataset}\SpecialCharTok{$}\NormalTok{r\_Weight))}
+\NormalTok{dataset}\SpecialCharTok{$}\NormalTok{c\_Birthweight\_kg }\OtherTok{\textless{}{-}}\NormalTok{ (dataset}\SpecialCharTok{$}\NormalTok{r\_Birthweight }\SpecialCharTok{{-}} \FunctionTok{mean}\NormalTok{(dataset}\SpecialCharTok{$}\NormalTok{r\_Birthweight))}
+
+\NormalTok{df\_final }\OtherTok{=}\NormalTok{ dataset[}\FunctionTok{c}\NormalTok{(}\StringTok{"ChildID"}\NormalTok{, }\StringTok{"Gender"}\NormalTok{, }\StringTok{"NObs"}\NormalTok{, }\StringTok{"GenderID"}\NormalTok{,}
+                      \StringTok{"c\_Weight\_kg"}\NormalTok{, }\StringTok{"c\_Birthweight\_kg"}\NormalTok{, }\StringTok{"c\_Age\_years"}\NormalTok{)]}
+
+\FunctionTok{colnames}\NormalTok{(df\_final) }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"ChildID"}\NormalTok{, }\StringTok{"Gender"}\NormalTok{, }\StringTok{"NObs"}\NormalTok{, }\StringTok{"GenderID"}\NormalTok{,}
+                       \StringTok{"Weight"}\NormalTok{, }\StringTok{"Birthweight"}\NormalTok{, }\StringTok{"Age"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+We can also observe, that intercept and slope varies from participant to
+participant, which can also be modeled by multilevel models. In
+addition, growth rate is not constant - babies grow very fast directly
+after birth and then growth rate reduces after some time, - which means
+that we can include some non-linearity in the model to improve the fit.
+
+\section{Multilevel models of growing
+flexibility}\label{multilevel-models-of-growing-flexibility}
+
+We will fit different multilevel models of increasing complexity on this
+and compare them based on different criteria. Using these models we can
+try to answer following research questions, for example:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  How children's weight changes in the early stages of life?
+\item
+  Whether and how those growth patterns differ between individuals?
+\item
+  Are there any differences in development between children of different
+  gender?
+\item
+  Is there any influence of birth weight on post-natal development?
+\end{enumerate}
+
+\subsection{Random intercept model}\label{random-intercept-model}
+
+Multilevel models are sometimes called mixed models, and these two names
+highlight different aspects of the very same method. They are called
+``mixed'' because both fixed and random effects of predicted are
+allowed, and ``multilevel'' stands for separate modeling of parameters
+and their (co-)variances, i.e.~on different levels. Key idea is that the
+observed variability comes from two sources: from both between-person
+differences and within-person fluctuations. All multilevel models, as
+stated above, assume observations from different subjects to be
+independent, but correlated within the subject. Here the dependent
+variable is assumed to be normally distributed.
+
+The simplest multilevel model would be a random intercept model. That
+means that we have constant predictions for a subject over time, but we
+allow the intercept to vary over subjects. It can be written as follows
+in multilevel notation:
+
+\emph{Level 1:}
+\(y_{ti} = \beta_{0i} + e_{ti}, \qquad e_{ti} \sim \mathcal{N}(0, \sigma_e^2)\)
+
+\emph{Level 2:}
+\(\beta_{0i} = \gamma_{00} + U_{0i}, \qquad U_{0i} \sim \mathcal{N}(0, \tau_{U_0}^2)\),
+where:
+
+\begin{itemize}
+\tightlist
+\item
+  \(y_{ti}\) --- observation of dependent variable of unit \(i\) at time
+  point \(t \in \{t_1, \ldots, t_N\}\);
+\item
+  \(\gamma_{00}\) --- fixed intercept;
+\item
+  \(U_{0i}\) --- random intercept, varies over individuals.
+\end{itemize}
+
+This model has 3 parameters to estimate: the fixed intercept
+\(\gamma_{00}\), variance of random intercept \(\tau_{U_0}^2\) and
+residual variance \(\sigma_e^2\).
+
+We can fit a model using \texttt{lmer()} function from \texttt{lme4}
+package (loaded above). The random effects are specified in brackets
+with the grouping variable for the corresponding level behind the
+vertical bar ``\textbar{}'':
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{model01 }\OtherTok{\textless{}{-}} \FunctionTok{lmer}\NormalTok{(Weight }\SpecialCharTok{\textasciitilde{}} \DecValTok{1} \SpecialCharTok{+}\NormalTok{ (}\DecValTok{1}\SpecialCharTok{|}\NormalTok{ChildID), }
+                \AttributeTok{data=}\NormalTok{df\_final, }\AttributeTok{REML=}\ConstantTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+Model parameters are estimated using Maximum-Likelihood (ML) approach,
+and in \texttt{lme4} package both unrestricted and restricted version
+are implemented. Restricted ML (\texttt{REML\ =\ TRUE}) accounts for
+uncertainty from simultaneous estimation of fixed parameters and
+therefore delivers unbiased parameter variance estimates
+\autocite{hoffman_2015}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{time\_grid }\OtherTok{\textless{}{-}} \FunctionTok{seq}\NormalTok{(}\FunctionTok{min}\NormalTok{(df\_final[}\StringTok{"Age"}\NormalTok{]), }\FunctionTok{max}\NormalTok{(df\_final[}\StringTok{"Age"}\NormalTok{]), }\AttributeTok{length.out =} \DecValTok{50}\NormalTok{)}
+
+\NormalTok{plot\_results }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(data, model, model\_name,}
+                         \AttributeTok{n =} \DecValTok{10}\NormalTok{, }\AttributeTok{ncols =} \DecValTok{5}\NormalTok{)\{}
+  \FunctionTok{set.seed}\NormalTok{(}\DecValTok{42}\NormalTok{)}
+\NormalTok{  sample\_n\_id }\OtherTok{\textless{}{-}} \FunctionTok{sample}\NormalTok{(}\FunctionTok{as.vector}\NormalTok{(}\FunctionTok{unique}\NormalTok{(data}\SpecialCharTok{$}\NormalTok{ChildID[}\FunctionTok{order}\NormalTok{(data}\SpecialCharTok{$}\NormalTok{ChildID)])), n)}
+\NormalTok{  sample\_n\_id\_idx }\OtherTok{\textless{}{-}} \FunctionTok{which}\NormalTok{(data}\SpecialCharTok{$}\NormalTok{ChildID }\SpecialCharTok{\%in\%}\NormalTok{ sample\_n\_id)}
+\NormalTok{  data\_n }\OtherTok{\textless{}{-}}\NormalTok{ data[sample\_n\_id\_idx, }
+                 \FunctionTok{c}\NormalTok{(}\StringTok{"ChildID"}\NormalTok{, }\StringTok{"Birthweight"}\NormalTok{, }\StringTok{"GenderID"}\NormalTok{, }\StringTok{"Age"}\NormalTok{, }\StringTok{"Weight"}\NormalTok{)]}
+\NormalTok{  unique\_data\_n }\OtherTok{\textless{}{-}} \FunctionTok{unique}\NormalTok{(data\_n[}\FunctionTok{c}\NormalTok{(}\StringTok{"ChildID"}\NormalTok{, }\StringTok{"Birthweight"}\NormalTok{, }\StringTok{"GenderID"}\NormalTok{)])}
+\NormalTok{  newdata }\OtherTok{\textless{}{-}} \FunctionTok{cbind}\NormalTok{(unique\_data\_n, }
+                   \FunctionTok{rep}\NormalTok{(}\FunctionTok{rownames}\NormalTok{(unique\_data\_n), }\AttributeTok{each =} \FunctionTok{length}\NormalTok{(time\_grid)))[,}\DecValTok{1}\SpecialCharTok{:}\DecValTok{3}\NormalTok{]}
+\NormalTok{  newdata}\SpecialCharTok{$}\NormalTok{Age }\OtherTok{\textless{}{-}} \FunctionTok{rep}\NormalTok{(time\_grid, }\AttributeTok{each =}\NormalTok{ n)}
+  
+\NormalTok{  newdata}\SpecialCharTok{$}\NormalTok{Predictions }\OtherTok{\textless{}{-}} \FunctionTok{predict}\NormalTok{(model, newdata)}
+  
+\NormalTok{  g }\OtherTok{=} \FunctionTok{ggplot}\NormalTok{(data\_n, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ Age, }\AttributeTok{y =}\NormalTok{ Weight)) }\SpecialCharTok{+}
+    \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{fill=}\StringTok{"grey"}\NormalTok{, }\AttributeTok{pch=}\DecValTok{21}\NormalTok{, }\AttributeTok{size=}\DecValTok{2}\NormalTok{, }\AttributeTok{stroke=}\FloatTok{1.25}\NormalTok{) }\SpecialCharTok{+}
+    \FunctionTok{geom\_line}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{group=}\NormalTok{ChildID)) }\SpecialCharTok{+} 
+    \FunctionTok{facet\_wrap}\NormalTok{(}\SpecialCharTok{\textasciitilde{}}\NormalTok{ChildID, }\AttributeTok{ncol=}\NormalTok{ncols)}\SpecialCharTok{+}
+    \FunctionTok{scale\_x\_continuous}\NormalTok{(}\AttributeTok{name =} \StringTok{"Age"}\NormalTok{) }\SpecialCharTok{+} 
+    \FunctionTok{scale\_y\_continuous}\NormalTok{(}\AttributeTok{name =} \StringTok{"Weight"}\NormalTok{) }\SpecialCharTok{+}
+    \FunctionTok{geom\_line}\NormalTok{(}\AttributeTok{data =}\NormalTok{ newdata, }
+              \FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ Age, }\AttributeTok{y =}\NormalTok{ Predictions, }\AttributeTok{group =}\NormalTok{ ChildID, }
+                  \AttributeTok{color =} \FunctionTok{factor}\NormalTok{(ChildID)), }\AttributeTok{lwd=}\FloatTok{1.5}\NormalTok{) }\SpecialCharTok{+}
+    \FunctionTok{ggtitle}\NormalTok{(model\_name)}
+  
+  \FunctionTok{return}\NormalTok{(g)\}}
+
+\FunctionTok{plot\_results}\NormalTok{(df\_final, model01, }\AttributeTok{n=}\DecValTok{5}\NormalTok{, }\AttributeTok{ncols=}\DecValTok{5}\NormalTok{,}
+             \AttributeTok{model\_name =} \StringTok{"Model 1: random intercept model"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+
+{\centering \includegraphics{Report_files/figure-latex/vis_model_fit-1} 
+
+}
+
+\caption{...}\label{fig:vis_model_fit}
+\end{figure}
+
+First we observe the model fit on a small subsample of participants. For
+that we generate multiple time points and use fitted parameter values to
+plot the model prediction.
+
+In the Figure \ldots{} we can see that the model clearly underfits the
+observations, which is quite natural: body weight increases while the
+child grows. Another point is that fit of the model is singular,
+i.e.~variance of random effects is estimated close to 0, which is not
+very different from just fixed intercept. However, this model serves us
+later as baseline.
+
+\subsection{Random intercept, fixed linear time
+model}\label{random-intercept-fixed-linear-time-model}
+
+We can improve the model fit by adding covariates to the model, and a
+first candidate would be a fixed linear effect of time \(\gamma_{10}\).
+A model can be written as:
+
+\emph{Level 1:}
+\(y_{ti} = \beta_{0i} + \beta_{1i} \cdot x_{ti}+ e_{ti}, \quad e_{ti} \sim \mathcal{N}(0, \sigma_e^2)\)
+
+\emph{Level 2:}
+\(\beta_{0i} = \gamma_{00} + U_{0i}, \, \mbox{where} \;\; U_{0i} \sim \mathcal{N}(0, \tau_{U_0}^2), \quad \beta_{1i} =  \gamma_{10} \,,\)
+
+where \(x_{ti}\) stands for time variable at observation \(t\) of
+individual \(i\).
+
+Hence, only the model for means is changed here and model for variance
+remains the same. The resulting model will produce growth lines with
+different intercepts but same slope for all subjects. We can now fit the
+model and visualize the results:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{model02 }\OtherTok{\textless{}{-}} \FunctionTok{lmer}\NormalTok{(Weight }\SpecialCharTok{\textasciitilde{}} \DecValTok{1} \SpecialCharTok{+}\NormalTok{ Age }\SpecialCharTok{+}\NormalTok{ (}\DecValTok{1}\SpecialCharTok{|}\NormalTok{ChildID), }
+                    \AttributeTok{data=}\NormalTok{df\_final, }\AttributeTok{REML=}\ConstantTok{TRUE}\NormalTok{)}
+
+\FunctionTok{plot\_results}\NormalTok{(df\_final, model02, }\AttributeTok{n=}\DecValTok{5}\NormalTok{, }\AttributeTok{ncol =} \DecValTok{5}\NormalTok{,}
+             \AttributeTok{model\_name =} \StringTok{"Model 2: random intercept, fixed linear time"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+
+{\centering \includegraphics{Report_files/figure-latex/rint_fslp_model-1} 
+
+}
+
+\caption{Model predictions with random intercept and fixed slope}\label{fig:rint_fslp_model}
+\end{figure}
+
+Just after visual examination (see Figure 2) we can say that the model
+fit improved greatly, even though the lines don't overlap with
+observations perfectly. We can also review model summary for estimation
+details. First of all, residuals are distributed around zero which may
+be an indicator for a good fit. Random intercept \(U_{0i}\) has
+estimated variance of \(\hat \tau_{U_0}^2 = 0.53\pm 0.73\) and residual
+variance is estimated at \(\hat \sigma_e^2 = 1.76 \pm 1.33\).
+
+Linear effect of time is estimated at \(\hat \gamma_{10} = 3.67\) is
+considered significant (according to Wald test with
+\(\frac{\hat\gamma_j}{SE(\hat\gamma_j)} \sim t_{N-f}\), where
+\(j = 1,\ldots,f\) and \(f\) is number of fixed effects), however, the
+fixed intercept (\(\hat \gamma_{00} = -0.02\)) is not significant. Small
+correlation of fixed effects is also a good sign, meaning that fixed
+parameters are uncorrelated.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{summary}\NormalTok{(model02)}
+
+\CommentTok{\#Linear mixed model fit by REML. t{-}tests use Satterthwaite\textquotesingle{}s method }
+\CommentTok{\#[lmerModLmerTest]}
+\CommentTok{\# Formula: Weight \textasciitilde{} 1 + Age + (1 | ChildID)}
+\CommentTok{\#    Data: df\_final}
+\CommentTok{\# }
+\CommentTok{\# REML criterion at convergence: 5358.1}
+\CommentTok{\# }
+\CommentTok{\# Scaled residuals: }
+\CommentTok{\#     Min      1Q  Median      3Q     Max }
+\CommentTok{\# {-}2.3687 {-}0.7542  0.0667  0.6669  4.4676 }
+\CommentTok{\# }
+\CommentTok{\# Random effects:}
+\CommentTok{\#  Groups   Name        Variance Std.Dev.}
+\CommentTok{\#  ChildID  (Intercept) 0.5329   0.730   }
+\CommentTok{\#  Residual             1.7598   1.327   }
+\CommentTok{\# Number of obs: 1481, groups:  ChildID, 477}
+\CommentTok{\# }
+\CommentTok{\# Fixed effects:}
+\CommentTok{\#               Estimate Std. Error         df t value Pr(\textgreater{}|t|)    }
+\CommentTok{\# (Intercept)   {-}0.01564    0.04851  456.71250  {-}0.322    0.747    }
+\CommentTok{\# Age            3.67481    0.04495 1139.18833  81.746   \textless{}2e{-}16 ***}
+\CommentTok{\# {-}{-}{-}}
+\CommentTok{\# Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1}
+\CommentTok{\# {-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}}
+\CommentTok{\# Correlation of Fixed Effects:}
+\CommentTok{\#     (Intr)}
+\CommentTok{\# Age 0.002 }
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{Random linear time model}\label{random-linear-time-model}
+
+We can go further and add random effect of time into the model. This
+change will now affect model for the variance:
+
+\emph{Level 1:}
+\(y_{ti} = \beta_{0i} + \beta_{1i} \cdot x_{ti}+ e_{ti}, \quad e_{ti} \sim \mathcal{N}(0, \sigma_e^2)\)
+
+\emph{Level 2:}
+\(\beta_{0i} = \gamma_{00} + U_{0i}, \quad \beta_{1i} =  \gamma_{10} + U_{1i},\)
+
+where \(U_{0i} \sim \mathcal{N}(0, \tau_{U_0}^2)\) and
+\(U_{1i} \sim \mathcal{N}(0, \tau_{U_1}^2)\). This model has 6
+parameters to estimate: fixed intercept \(\gamma_{00}\), fixed slope
+\(\gamma_{10}\), residual variance \(\sigma_e^2\), variances of random
+effects \(\tau_{U_0}^2\) and \(\tau_{U_1}^2\) as well as their
+covariance \(\tau_{U_{01}}\).
+
+According to \autocite{hoffman_2015} it is often useful to summarize
+them as covariance matrix \(G\): \[G =  \begin{pmatrix}
+                    \tau_{U_0}^2 & \tau_{U_{01}} \\ 
+                    \tau_{U_{01}} & \tau_{U_1}^2
+        \end{pmatrix},\] while residual variance is denoted as matrix R.
+All variances and covariances are assumed constant over subjects.
+
+We can then reformulate the model equation in vector notation, which
+will result in \[
+Y_i = X_i \cdot \mathbf{\gamma} + Z_i \cdot U_i + E_i,
+\] where \(Y_i \in \mathbb{R}^{n_i}\) is target vector of individual
+\(i\) (at \(n_i\) different time points), \(U_i = (U_{0i}, U_{0i})^T\)
+is matrix of random effects and \(E_i\in \mathbb{R}^{n_i}\) summarizes
+the residuals.
+
+Here \(E_{i} \sim \mathcal{N}(0, R), \, R = \sigma_e^2 I_{n_i}\) is
+assumed, however, another covariance structures (such as AR(1)) can be
+explored and assessed.
+
+Two design matrices \(X_i\) and \(Z_i\) are constructed as follows:
+
+\[
+X_i = \begin{pmatrix}
+                 1 & t_1 \\
+                 \vdots & \vdots \\
+                 1 & t_{n_i}
+              \end{pmatrix} \in \mathbb{R}^{n_i \times f} \quad
+Z_i = \begin{pmatrix}
+                 1 & t_1 \\
+                 \vdots & \vdots \\
+                 1 & t_{n_i}
+              \end{pmatrix} \in \mathbb{R}^{n_i \times u},
+\] where \(f\) is number of fixed effects, and \(u\) - number of random
+effects in the model. Now, using vector notation we can also derive the
+expression for the total variance (for an individual \(i\)): \[
+V_i = \mathbb{V}ar(Y_{i}) = \mathbb{V}ar(X_i \cdot \mathbf{\gamma} + Z_i \cdot U_i + E_i) = \,Z_i^T \, \mathbb{V}ar(U_i)\,Z_i + R =  Z_i^T G Z_i + R.
+\] Thanks to the construction of the design matrix \(Z_i\), the model
+can accommodate data from irregular observations with different number
+of time \(n_i\) points per person \(i\). Complete \(Z\) matrix is a
+block-diagonal matrix with matrices \(Z_i, i = 1, \ldots, N\) on its
+diagonal.
+
+Another assumptions of the model is that no covariances are allowed for
+the variance terms across levels, i.e.~between \(\tau_{U_0}^2\) and
+\(\sigma_e^2\), and \(\tau_{U_1}^2\) and \(\sigma_e^2\) respectively.
+Also, all units are assumed conditionally independent, meaning no
+relationships within each of the \(U_{0i}, U_{1i}\), or \(e_{ti}\)
+values across persons are allowed after including the model predictors.
+
+Since we assume residuals to be multivariate normally distributed,
+likelihood function for the model can be written as follows: \[
+L = \prod_{i=1}^N (2\pi)^{-\frac{n}{2}} \cdot |V_i|^{-\frac{1}{2}} \cdot \exp{\left[{-\frac{1}{2}} (Y_i - X_i \mathbf{\gamma})^T V_i^{-1}(Y_i - X_i \mathbf{\gamma})\right]}  
+\] with log-likelihood: \[
+LL = -\frac{T}{2} \log(2\pi) -\frac{1}{2}\sum_{i=1}^N\log|V_i| - \frac{1}{2}\sum_{i=1}^N (Y_i - X_i \mathbf{\gamma})^T V_i^{-1}(Y_i - X_i \mathbf{\gamma})
+\] Newton-Raphson algorithm is then used update estimates of matrix
+\(V_i\) iteratively using derivatives of LL-function. For restricted ML
+method following function is optimized: \[
+LL_{\mbox{REML}} = -\frac{T-f}{2} \log(2\pi) -\frac{1}{2}\sum_{i=1}^N\log|V_i| - \frac{1}{2}\sum_{i=1}^N (Y_i - X_i \mathbf{\gamma})^T V_i^{-1}(Y_i - X_i \mathbf{\gamma}) - \frac{1}{2}\sum_{i=1}^N\log|X_i^T  V_i^{-1} X_i|,
+\] for model with \(f\) fixed effects and \(N\) observations in total.
+
+Random effects \(U_i\) are not included in the likelihood, therefore
+they can be predicted with \(V_i\), \(X_i\) and \(Y_i\) given:
+\(U_i = G_i Z_i^T V_i^{-1} (Y_i - X_i\mathbf\gamma)\). Fixed effects
+\(\mathbf\gamma\) and their SEs also can be estimated with \(V_i\)'s
+given (similar to GLM estimation): \[
+\mathbf\gamma = \left(\sum_{i=1}^N(X_i^T V_i^{-1} X_i)\right)^{-1}\sum_{i=1}^N(X_i^T V_i^{-1} Y_i) \quad \mbox{and} \quad 
+\mathbb{C}ov(\mathbf{\gamma}) = \left(\sum_{i=1}^N(X_i^T V_i^{-1} X_i)\right)^{-1}
+\]\\
+To fit a random linear time model we include \texttt{Age} variable as
+random factor in addition to the intercept:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{model03 }\OtherTok{\textless{}{-}} \FunctionTok{lmer}\NormalTok{(Weight }\SpecialCharTok{\textasciitilde{}} \DecValTok{1} \SpecialCharTok{+}\NormalTok{ Age }\SpecialCharTok{+}\NormalTok{ (}\DecValTok{1} \SpecialCharTok{+}\NormalTok{ Age}\SpecialCharTok{|}\NormalTok{ChildID), }
+                    \AttributeTok{data=}\NormalTok{df\_final, }\AttributeTok{REML=}\ConstantTok{TRUE}\NormalTok{)}
+\FunctionTok{plot\_results}\NormalTok{(df\_final, model03, }\AttributeTok{n=}\DecValTok{5}\NormalTok{, }\AttributeTok{ncols=}\DecValTok{5}\NormalTok{,}
+             \AttributeTok{model\_name =} \StringTok{"Model 3: random linear time (RLT)"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+
+{\centering \includegraphics{Report_files/figure-latex/rint_rslp_model-1} 
+
+}
+
+\caption{Model predictions with random intercept and random slope}\label{fig:rint_rslp_model}
+\end{figure}
+
+Here we can see slight differences between the slopes for different
+subjects. However, the model fit is singular again, here both random
+effects are perfectly correlated. Still, we can compare three existing
+models using \texttt{anova()} function from \texttt{lmerTest} package
+for likelihood-ratio test. Results are collected in the Table 3, and we
+can see that inclusion of time variable and even its random effect
+increased the quality of the model.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{anova}\NormalTok{(model01, model02, model03)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{longtable}[]{@{}lrrrrrrl@{}}
+\caption{Unconditional model comparison}\tabularnewline
+\toprule\noalign{}
+Model & \# par & AIC & BIC & -2*LL & \(\chi^2_d\) & d & p-value \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+Model & \# par & AIC & BIC & -2*LL & \(\chi^2_d\) & d & p-value \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+model01 & 3 & 7708.2 & 7724.1 & 7702.2 & & & \\
+model02 & 4 & 5357.5 & 5378.7 & 5349.5 & 2352.620 & 1 & \textless{}
+2.2e-16 \\
+model03 & 6 & 5286.2 & 5318.0 & 5274.2 & 75.362 & 2 & \textless{}
+2.2e-16 \\
+\end{longtable}
+
+\subsection{Conditional linear model}\label{conditional-linear-model}
+
+We now explored different assumptions about the time structure. The
+potential for further improvement remains, for example, through the
+inclusion of additional covariates. Here we have two time-invariant
+regressors - weight at birth as baseline observations (numeric) and
+gender(binary), - that can be included in the model. Theoretically,
+birth weight not only influences intercept, but also can have an impact
+on growth rate after birth. For example, children that are born
+premature, often have health issues directly after birth and may grow
+slower. It is also interesting to study, whether differences between
+development speed of boys and girls can be seen during early stages of
+life.
+
+Since it is possible to test all hypotheses at once, we will include
+both fixed effects and also consider interactions between them and time
+variable. Then the equation on the level 1 will be written as follows:
+\[
+y_{ti} = (\gamma_{00} + U_{0i}) + (\gamma_{10} + U_{1i}) \cdot x_{ti} + \gamma_{20} \cdot b_{ti} + \gamma_{30} \cdot g_{ti} + \gamma_{40} \cdot x_{ti}\cdot b_{ti} + \gamma_{50} \cdot x_{ti}\cdot g_{ti} + e_{ti}
+\] where \(b_{ti}\) and \(g_{ti}\) denote birth weight and gender
+respectively. Design matrix \(X_i\) is updated accordingly by two
+columns and \(Z_i\) remains unchanged. To fit such model, we include
+respective variables into the formula and then review model summary (see
+Table 4).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{model04 }\OtherTok{\textless{}{-}} \FunctionTok{lmer}\NormalTok{(Weight }\SpecialCharTok{\textasciitilde{}} \DecValTok{1} \SpecialCharTok{+}\NormalTok{ Age }\SpecialCharTok{*}\NormalTok{ Birthweight }\SpecialCharTok{+}\NormalTok{ Age }\SpecialCharTok{*}\NormalTok{ GenderID }\SpecialCharTok{+}\NormalTok{ (}\DecValTok{1}\SpecialCharTok{|}\NormalTok{ChildID), }
+                \AttributeTok{data=}\NormalTok{df\_final, }\AttributeTok{REML=}\ConstantTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{summary}\NormalTok{(model04)}
+\FunctionTok{anova}\NormalTok{(model02, model04)}
+\end{Highlighting}
+\end{Shaded}
+
+Residuals are again distributed around zero. Random intercept \(U_{0i}\)
+has estimated variance of \(\hat \tau_{U_0}^2 = 0.25 \pm 0.50\), which
+has decreased compared to corresponding unconditional model (model02).
+Residual variance is estimated at \(\hat \sigma_e^2 = 1.76 \pm 1.33\)
+(same as in the second model). Fixed intercept estimate increased from
+\(-0.015\) to \(0.23\), and fixed slope increased a little as well. Both
+new fixed effects seem to be significantly larger/smaller than 0 as well
+as interaction term between birth weight and age, however, absolute
+value of estimated parameters are rather small, except for fixed slope
+parameter. Also the test shows that the addition of these covariates
+significantly improves the fit (see Table 5).
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.3590}}
+  >{\raggedleft\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1282}}
+  >{\raggedleft\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1538}}
+  >{\raggedleft\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1154}}
+  >{\raggedleft\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1154}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 10\tabcolsep) * \real{0.1282}}@{}}
+\caption{Conditional model parameter estimation}\tabularnewline
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Predictor
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+Estimate
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+Std. Error
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+df
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+t value
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+p-value
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Predictor
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+Estimate
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+Std. Error
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+df
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+t value
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+p-value
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+(Intercept) & 0.23682 & 0.05842 & 429.06364 & 4.054 & 5.98e-05 \\
+Age & 3.71449 & 0.06264 & 1168.76560 & 59.295 & \textless{} 2e-16 \\
+Birthweight & 0.91200 & 0.08321 & 429.88095 & 10.960 & \textless{}
+2e-16 \\
+GenderID & -0.49817 & 0.08329 & 442.78809 & -5.981 & 4.58e-09 \\
+Age \(\times\) Birthweight & 0.18107 & 0.08929 & 1183.33744 & 2.028 &
+0.0428 \\
+Age \(\times\) GenderID & -0.09151 & 0.08915 & 1172.60511 & -1.026 &
+0.3049 \\
+\end{longtable}
+
+\begin{longtable}[]{@{}lrrrrrrl@{}}
+\caption{Conditional vs.~unconditional model comparison}\tabularnewline
+\toprule\noalign{}
+Model & \# par & AIC & BIC & -2*LL & \(\chi^2_d\) & d & p-value \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+Model & \# par & AIC & BIC & -2*LL & \(\chi^2_d\) & d & p-value \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+model02 & 4 & 5357.5 & 5378.7 & 5349.5 & & & \\
+model04 & 8 & 5219.0 & 5261.4 & 5203.0 & 146.59 & 4 & \textless{}
+2.2e-16 \\
+\end{longtable}
+
+\subsection{Beyond linearity: quadratic time
+effect}\label{beyond-linearity-quadratic-time-effect}
+
+However, there is still some possibility for improvement. During data
+exploration we mentioned that the growth doesn't seem to be linear:
+weight increases very quickly short after birth but then the growth
+slows down. We can try to account for that in the model by including
+non-linear transformation of the time variable into the models for mean
+and/or for variance.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{model05 }\OtherTok{\textless{}{-}} \FunctionTok{lmer}\NormalTok{(Weight }\SpecialCharTok{\textasciitilde{}} \DecValTok{1} \SpecialCharTok{+}\NormalTok{ Age }\SpecialCharTok{+} \FunctionTok{I}\NormalTok{(Age}\SpecialCharTok{\^{}}\DecValTok{2}\NormalTok{) }\SpecialCharTok{+}\NormalTok{ (}\DecValTok{1}\SpecialCharTok{|}\NormalTok{ChildID), }
+                \AttributeTok{data=}\NormalTok{df\_final, }\AttributeTok{REML=}\ConstantTok{TRUE}\NormalTok{)}
+\NormalTok{model06 }\OtherTok{\textless{}{-}} \FunctionTok{lmer}\NormalTok{(Weight }\SpecialCharTok{\textasciitilde{}} \DecValTok{1} \SpecialCharTok{+}\NormalTok{ Age }\SpecialCharTok{+} \FunctionTok{I}\NormalTok{(Age}\SpecialCharTok{\^{}}\DecValTok{2}\NormalTok{) }\SpecialCharTok{+}\NormalTok{ (}\DecValTok{1} \SpecialCharTok{+}\NormalTok{ Age}\SpecialCharTok{|}\NormalTok{ChildID), }
+                    \AttributeTok{data=}\NormalTok{df\_final, }\AttributeTok{REML=}\ConstantTok{TRUE}\NormalTok{)}
+\FunctionTok{plot\_results}\NormalTok{(df\_final, model06, }\AttributeTok{n=}\DecValTok{5}\NormalTok{, }\AttributeTok{ncols=}\DecValTok{5}\NormalTok{,}
+             \AttributeTok{model\_name =} \StringTok{"Model 6: random intercept, random linear, fixed quadratic time"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+
+{\centering \includegraphics{Report_files/figure-latex/rint_fquad_model-1} 
+
+}
+
+\caption{Model predictions with quadratic time}\label{fig:rint_fquad_model}
+\end{figure}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{anova}\NormalTok{(model02, model05, model06)}
+\end{Highlighting}
+\end{Shaded}
+
+When extending the model to account for non-linear development, a
+quadratic function of time yielded a more accurate representation of the
+data (compare Table 6). In this case, models incorporating both fixed
+and random linear time effects were appropriate, however, quadratic term
+of time should be rather included as fixed effect only. This indicates
+that the observed trajectories are not purely linear but exhibit
+curvature over time. However, quadratic function of time cannot be an
+optimal solution for long-term prediction. By definition it starts to
+decrease after some time with the same rate it was increasing before,
+which cannot be an adequate model for body weight.
+
+\begin{longtable}[]{@{}lrrrrrrl@{}}
+\caption{Model comparison for linear vs.~quadratic time}\tabularnewline
+\toprule\noalign{}
+Model & \# par & AIC & BIC & -2*LL & \(\chi^2_d\) & d & p-value \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+Model & \# par & AIC & BIC & -2*LL & \(\chi^2_d\) & d & p-value \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+model02 & 4 & 5357.5 & 5378.7 & 5349.5 & & & \\
+model05 & 5 & 4356.0 & 4382.5 & 4346.0 & 1003.54 & 1 & \textless{}
+2.2e-16 \\
+model06 & 7 & 4080.5 & 4117.6 & 4066.5 & 279.49 & 2 & \textless{}
+2.2e-16 \\
+\end{longtable}
+
+\section{Summary and outlook}\label{summary-and-outlook}
+
+Analyzing longitudinal data with multilevel models reveals some key
+practical and methodological aspects. First key observation concerns the
+robustness of multilevel models in the presence of missing and
+imbalanced data. Longitudinal datasets are often characterized by
+unequal numbers of observations across individuals or irregular
+measurement intervals. The applied modeling framework proved capable of
+handling such cases effectively, which represents a substantial
+advantage over more traditional approaches such as repeated-measures
+ANOVA. Furthermore, the results emphasize the crucial role of data
+pre-processing. Proper handling of missing values and scaling of
+variables are essential not only for ensuring model convergence but also
+for enabling meaningful interpretation of the estimated parameters.
+
+Several directions for future research can be formulated based on the
+results of this analysis. Firstly, other structures for variance models
+can be explored. Here, only unstructured variance model was used, but it
+is possible that other structures such as compound symmetry (CS) or
+autoregressive structure will describe the variability in the
+observations better. Secondly, alternative non-linear transformations of
+time variable can be explored. For example, logarithmic or exponential
+functions may provide a better fit for certain types of growth or decay
+processes in long term studies, particularly when changes occur more
+rapidly at early time points and stabilize later on. The flexibility of
+multilevel models allows such transformations to be incorporated
+straightforwardly. Model comparison techniques and diagnostic tools
+should be employed to assess whether such extensions are justified by
+the data.
+
+In conclusion, multilevel modeling provides a powerful and flexible
+framework for analyzing longitudinal data, enabling researchers to
+capture both overall trends and individual trajectories. Future
+developments and extensions of this approach hold considerable potential
+for advancing empirical research in this field.
+
+\printbibliography
+
+\end{document}

@@ -90,17 +90,6 @@ model13 <- lmer(Weight ~ 1 + Age + I(Age^2) + (1 + Age|ChildID) +
                   Age * Birthweight + Age * GenderID, 
                 data=df_wide, REML=TRUE)
 
-## long data
-
-#model12 <- lmer(Weight ~ 1 + (1|ChildID), 
-#                data=df_long, REML=FALSE)
-
-#model13 <- lmer(Weight ~ 1 + (1|ChildID), 
-#                data=df_long, REML=FALSE)
-
-#model14 <- lmer(Weight ~ 1 + (1|ChildID), 
-#                data=df_long, REML=FALSE)
-
 #############################
 #####    Save results   #####
 #############################
@@ -155,7 +144,7 @@ plot_results <- function(data, model, model_name,
 }
 
 plot_results(df_wide, model01, 
-             model_name = "Model 1: within-person empty model")
+             model_name = "Model 1: random intercept model")
 plot_results(df_wide, model02, n=6, ncol = 3,
              model_name = "Model 2: random intercept, fixed linear time")
 plot_results(df_wide, model03, 
@@ -193,12 +182,11 @@ plot_results(df_wide, model18, n = 6, ncol = 3,
 
 ###############################################
 ########       Model diagnostics        #######
-summary(model01)
+summary(model02)
 anova(model01, model02, model03)
 anova(model09, model10, model11)
-summary(model13)
-anova(model13)
+anova(model18)
 
-model19 <- lmer(Weight ~ 1 + Age + I(Age^2) + (1 + Age|ChildID) +
-                  Age * Birthweight + Age * GenderID, 
-                data=df_wide, REML=TRUE)
+summary(model13)
+
+

@@ -67,6 +67,9 @@ plot_facet_var("Age", "Weight", data_wide, "", "NObs",
                transfx = " (in days)", transfy = " (in grams)")
 }
 
+# Exclude the data with 1 observation only (not longitudinal data)
+data_wide <- data_wide[data_wide$NObs > 1,]
+
 # Rescale days to weeks/years and grams to kilograms to avoid calculations with large numbers
 
 data_wide$r_Weight <- data_wide$Weight / 1000
@@ -140,9 +143,6 @@ plot_facet_var("r_Age", "r_Weight", data_wide, data_type = "data wide",
 
 table(data_wide$Gender, data_wide$NObs) / rep(2:5, each = 2)
 #table(data_long$Gender, data_long$NObs) / rep(2:6, each = 2)
-
-# Exclude the data with 1 observation only (not longitudinal data)
-data_wide <- data_wide[data_wide$NObs > 1,]
 
 
 #> log doesn't help much
