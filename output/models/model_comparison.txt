@@ -1,0 +1,26 @@
+=== ANOVA Model Comparison ===
+
+Data: df_wide
+Models:
+model01: Weight ~ 1 + (1 | ChildID)
+model02: Weight ~ 1 + Age + (1 | ChildID)
+model03: Weight ~ 1 + Age + (1 + Age | ChildID)
+        npar    AIC    BIC  logLik -2*log(L)    Chisq Df Pr(>Chisq)    
+model01    3 7708.2 7724.1 -3851.1    7702.2                           
+model02    4 5357.5 5378.7 -2674.8    5349.5 2352.620  1  < 2.2e-16 ***
+model03    6 5286.2 5318.0 -2637.1    5274.2   75.362  2  < 2.2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+
+Data: df_wide
+Models:
+model09: Weight ~ 1 + Age + I(Age^2) + (1 | ChildID)
+model10: Weight ~ 1 + Age + I(Age^2) + (1 + Age | ChildID)
+model11: Weight ~ 1 + Age + I(Age^2) + (1 + Age + I(Age^2) | ChildID)
+        npar    AIC    BIC  logLik -2*log(L)  Chisq Df Pr(>Chisq)    
+model09    5 4356.0 4382.5 -2173.0    4346.0                         
+model10    7 4080.5 4117.6 -2033.2    4066.5 279.49  2  < 2.2e-16 ***
+model11   10 3910.7 3963.7 -1945.3    3890.7 175.84  3  < 2.2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
